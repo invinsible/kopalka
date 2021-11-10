@@ -6,6 +6,7 @@ const {Sequelize, DataTypes} = require('sequelize');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const koajwt = require('koa-jwt');
+const errorHandlerMiddleware = require('.//middleware/error-handler.js')
 
 require('dotenv').config();
 
@@ -98,6 +99,7 @@ async function main() {
 
 
     // Starting app
+    app.use(errorHandlerMiddleware)
     app.use(cors({origin: '*'}));
     app.use(bodyParser());
     app.use(router.routes());
