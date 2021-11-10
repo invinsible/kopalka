@@ -6,6 +6,6 @@
 
 <style>
 .error-notice {
-  color: red;
+  color: #dc3545 ;
 }
 </style>

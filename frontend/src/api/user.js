@@ -3,7 +3,7 @@ import HTTP from './default';
 export default {
     authorization(data) {
         return HTTP({
-            url: '/users/',
+            url: '/auth/login/',
             method: 'GET',
             data: {
                 username: data.username,
