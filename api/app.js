@@ -5,6 +5,7 @@ const bodyParser = require('koa-bodyparser');
 const {Sequelize, DataTypes} = require('sequelize');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const koajwt = require('koa-jwt');
 
 require('dotenv').config();
 
@@ -80,6 +81,19 @@ async function main() {
             accessToken: token,
             expiresAt: tokenExpiration
         };
+    });
+
+    // Private endpoints
+    router.use(koajwt({secret: process.env.JWT_HMAC}))
+
+    // Enpoint with auth
+    router.get('/debug/me', async function (ctx) {
+        const user = await User.findByPk(ctx.state.user.data.id);
+
+        ctx.body = {
+            id: user.id,
+            username: user.username
+        }
     });
 
 
