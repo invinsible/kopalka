@@ -3,21 +3,21 @@ import HTTP from './default';
 export default {
     authorization(data) {
         return HTTP({
-            url: '/auth/login/',
-            method: 'GET',
+            url: 'https://kopalka.paaashka.ru/api/auth/login',
+            method: 'POST',
             data: {
                 username: data.username,
                 password: data.password,
             },           
         });
     },
-    // getUser(id, token) {
-    //     return HTTP({
-    //         url: `/users/${id}/`,
-    //         method: 'GET',
-    //         headers: {
-    //             Authorization: `Token ${token}`,
-    //         },
-    //     });
-    // },
+    checkToken(token) {
+        return HTTP({
+            url: 'https://kopalka.paaashka.ru/api/debug/me',
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    },
 };

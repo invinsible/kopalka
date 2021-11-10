@@ -6,31 +6,22 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    token: localStorage.getItem('userToken') || null,
-    userId: localStorage.getItem('userId') || null,
+    token: localStorage.getItem('accessToken') || null,    
   },
   mutations: {
     setToken(state, value) {
       state.token = value;
-    },
-    setId(state, value) {
-      state.userId = value;
-    },
+    },   
   },
   actions: {
     async login({commit}, data) {
       try {
-        const response = await User.login(data);
-        if (response?.data?.auth_token) {
-          const token = response.data.auth_token;
-          const id = response.data.id;
-          console.log('response.data', response.data);
-
-          localStorage.setItem('userToken', token);
-          localStorage.setItem('userId', id);
-
-          commit('setToken', token);
-          commit('setId', id);
+        const response = await User.authorization(data);
+        if (response?.data?.accessToken) {
+          const token = response.data.accessToken;
+          console.log(response.data.accessToken);
+          localStorage.setItem('accessToken', token);
+          commit('setToken', token);          
         }
 
         return response;
@@ -39,5 +30,7 @@ export default new Vuex.Store({
       }
     },
   },
-  modules: {},
+  getters: {
+    token: state => !!state.token,
+  },
 });

@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import store from '../store';
 
 Vue.use(VueRouter);
 
@@ -13,6 +14,13 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: () => import('../views/Login.vue'),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.token) {
+        next();
+      } else {
+        next('/');
+      }
+    },
   },
 ];
 
@@ -21,12 +29,12 @@ const router = new VueRouter({
   routes,
 });
 
-// router.beforeEach((to, from, next) => {
-//   if (to.path !== '/login' && !store.getters['user/isAuthenticated']) {
-//
-//   } else {
-//     next();
-//   }
-// });
+router.beforeEach((to, from, next) => {
+  if (to.path !== '/login' && !store.getters.token) {
+    next('login');
+  } else {
+    next();
+  }
+});
 
 export default router;
