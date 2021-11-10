@@ -1,13 +1,23 @@
 import HTTP from './default';
 
 export default {
-    getUserInfo(id, token) {
+    authorization(data) {
         return HTTP({
-            url: `/users/${id}/`,
+            url: '/users/',
             method: 'GET',
-            headers: {
-                Authorization: `Token ${token}`,
-            },
+            data: {
+                username: data.username,
+                password: data.password,
+            },           
         });
     },
+    // getUser(id, token) {
+    //     return HTTP({
+    //         url: `/users/${id}/`,
+    //         method: 'GET',
+    //         headers: {
+    //             Authorization: `Token ${token}`,
+    //         },
+    //     });
+    // },
 };
