@@ -29,7 +29,6 @@
 </template>
 
 <script>
-// import User from '@/api/user';
 export default {
   name: 'LoginForm',
   data() {
@@ -65,18 +64,22 @@ export default {
   },  
   methods: {
     async login() {
-      console.log('отправляем данные');
+      const response = await this.$store.dispatch('login', {
+        username: this.form.username.value,
+        password: this.form.password.value,
+      });
+      console.log(response);
       this.isError = true;
-      // await User.authorization(this.form).then(result => {
-      //   if (result.status === '401') {
-      //     this.isError = true;
-      //   }
-
-      //   if (result.status === 'ok') {
+      
+      // if (response && response.status === 200) {
       //     this.resetForm();
-      //   }
-        
-      // });
+      //     console.log('response', response);
+          
+
+      //     this.$router.push('/');
+      return;
+      //   }   
+      // this.isError = true;    
     },
 
     resetValidNotice() {
