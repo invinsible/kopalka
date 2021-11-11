@@ -20,12 +20,30 @@ export default {
             },           
         });
     },
-    checkToken(accesToken) {
+    checkToken(accessToken) {
         return HTTP({
             url: 'https://kopalka.paaashka.ru/api/debug/me',
             method: 'GET',
             headers: {
-                Authorization: `Bearer ${accesToken}`,
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+    },
+    getInventory(accessToken) {
+        return HTTP({
+            url: 'https://kopalka.paaashka.ru/api/inventory',
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+    },
+    getTable(accessToken) {
+        return HTTP({
+            url: 'https://kopalka.paaashka.ru/api/work/items',
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
             },
         });
     },

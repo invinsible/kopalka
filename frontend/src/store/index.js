@@ -9,6 +9,8 @@ export default new Vuex.Store({
     user: null,
     refreshToken: localStorage.getItem('refreshToken') || null,
     accessToken: localStorage.getItem('accessToken') || null,
+    inventory: null,
+    table: null,
   },
   mutations: {
     setRefreshToken(state, value) {
@@ -19,6 +21,12 @@ export default new Vuex.Store({
     },
     setUser(state, value) {
       state.user = value;
+    },
+    setTable(state, value) {
+      state.table = value;
+    },
+    setInventory(state, value) {      
+      state.inventory = value;
     },
   },
   actions: {
@@ -62,10 +70,41 @@ export default new Vuex.Store({
         console.log('CheckToken Error', error);
       }
     },
+
+    async getInventory({commit}, token) {
+      try {
+        const response = await User.getInventory(token);        
+        if (response) {
+          commit('setInventory', response.data);
+          return;
+        }
+      } catch (error) {
+        console.log('GetInventory Error', error);
+      }
+    },
+
+    async getTable({commit}, token) {
+      try {
+        const response = await User.getTable(token);        
+        if (response) {
+          commit('setTable', response.data);
+          return;
+        }
+      } catch (error) {
+        console.log('GetTable Error', error);
+      }
+    },
   },
   getters: {    
     refreshToken: state => state.refreshToken,
     isRefreshToken: state => !!state.refreshToken,
     isAccessToken: state => !!state.accessToken,
+    inventory: state => state.inventory,
+    table: state => {
+      function byField(field) {        
+        return (a, b) => a[field] > b[field] ? -1 : 1;
+      }
+      return state.table.sort(byField('rate'));
+    },
   },
 });

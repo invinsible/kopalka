@@ -1,41 +1,54 @@
 <template>
   <b-container class="main-page">
-    <h1>привет юзернейм  ({{ isRefreshToken }})</h1>
-    <b-table striped hover :items="items"></b-table>
-    <a @click.prevent="check">Проверить токен</a>
+    <h1>Болото</h1>
+    <b-row v-if="!isLoad">
+      <b-col cols="12" sm="8" lg="5">
+        <mineral-table :items="table" />
+      </b-col>
+      <b-col>
+        <buttons-block />        
+      </b-col> 
+    </b-row>       
+    <p v-else>Идёт загрузка</p>
   </b-container>
 </template>
 
 <script>
 import {mapGetters} from 'vuex';
-import User from '@/api/user';
+import MineralTable from '@/components/MineralTable.vue';
+import ButtonsBlock from '@/components/ButtonsBlock.vue';
 
-export default {  
+export default {
   name: 'Home',
+  components: {
+    MineralTable,
+    ButtonsBlock,
+  },
   data() {
     return {
-      items: [
-          {puk: 40, first_name: 'Dickerson', last_name: 'Macdonald'},
-          {puk: 21, first_name: 'Larsen', last_name: 'Shaw'},
-          {puk: 89, first_name: 'Geneva', last_name: 'Wilson'},
-          {puk: 38, first_name: 'Jami', last_name: 'Carney'},
-        ],
+      isLoad: true,
     };
   },
   computed: {
-    ...mapGetters([      
-      'isRefreshToken',
-    ]),
+    ...mapGetters(['inventory', 'table']),
   },
-  methods: {
-    async check() {
-      try {
-        const response = await User.checkToken(localStorage.getItem('accessToken'));
-        console.log(response);
-      } catch (e) {
-        console.log(e);
-      }
-      
+  created() {
+    this.getTable();
+  },
+  methods: {    
+    async getInventory() {
+      await this.$store.dispatch(
+        'getInventory',
+        localStorage.getItem('accessToken'),
+      );
+      this.isLoad = false;
+    },
+    async getTable() {
+      await this.$store.dispatch(
+        'getTable',
+        localStorage.getItem('accessToken'),
+      );
+      this.isLoad = false;
     },
   },
 };
