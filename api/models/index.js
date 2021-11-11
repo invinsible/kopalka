@@ -8,10 +8,18 @@ const sequelize = new Sequelize({
     database: process.env.MYSQL_DATABASE,
 });
 
+const models = {
+    User: require('./user')(sequelize, DataTypes),
+    Token: require('./token')(sequelize, DataTypes),
+    Item: require('./item')(sequelize, DataTypes),
+    InventoryItem: require('./inventory_item')(sequelize, DataTypes),
+};
+
+// Creating associations
+models.Item.hasMany(models.InventoryItem, {foreignKey: 'item_id'})
+models.InventoryItem.belongsTo(models.Item, {foreignKey: 'item_id'})
+
 module.exports = {
-    sequelize: sequelize,
-    models: {
-        User: require('./user')(sequelize, DataTypes),
-        Token: require('./token')(sequelize, DataTypes),
-    }
+    sequelize,
+    models
 };
