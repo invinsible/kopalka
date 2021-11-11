@@ -1,7 +1,16 @@
 import HTTP from './default';
 
 export default {
-    authorization(data) {
+    authorization(refreshToken) {
+        return HTTP({
+            url: 'https://kopalka.paaashka.ru/api/auth/refresh',
+            method: 'POST',
+            data: {
+                refresh_token: refreshToken, 
+            },           
+        });
+    },
+    getRefreshToken(data) {
         return HTTP({
             url: 'https://kopalka.paaashka.ru/api/auth/login',
             method: 'POST',
@@ -11,12 +20,12 @@ export default {
             },           
         });
     },
-    checkToken(token) {
+    checkToken(accesToken) {
         return HTTP({
             url: 'https://kopalka.paaashka.ru/api/debug/me',
             method: 'GET',
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${accesToken}`,
             },
         });
     },

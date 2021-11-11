@@ -6,31 +6,67 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    token: localStorage.getItem('accessToken') || null,    
+    user: null,
+    refreshToken: localStorage.getItem('refreshToken') || null,
+    accessToken: localStorage.getItem('accessToken') || null,
   },
   mutations: {
-    setToken(state, value) {
-      state.token = value;
-    },   
+    setRefreshToken(state, value) {
+      state.refreshToken = value;
+    },  
+    setAccessToken(state, value) {
+      state.accessToken = value;
+    },
+    setUser(state, value) {
+      state.user = value;
+    },
   },
   actions: {
-    async login({commit}, data) {
-      try {
-        const response = await User.authorization(data);
-        if (response?.data?.accessToken) {
-          const token = response.data.accessToken;
-          console.log(response.data.accessToken);
-          localStorage.setItem('accessToken', token);
-          commit('setToken', token);          
-        }
+    async login({dispatch, commit}, data) {
+     const refreshResponse = await dispatch('getRefreshToken', data);
+     if (refreshResponse.status === 200) {
+      const accessResponse = await dispatch('getAccessToken');
+      commit('setUser', accessResponse.data.username);
+      return accessResponse;
+     }
+     if (refreshResponse.status === 400) {
+      return refreshResponse;
+     }
+    },
 
-        return response;
+    async getRefreshToken({commit}, data) {
+      const refreshResponse = await User.getRefreshToken(data);
+      if (refreshResponse?.data?.refreshToken) {
+        localStorage.setItem('refreshToken', refreshResponse.data.refreshToken);
+        commit('setRefreshToken', refreshResponse.data.refreshToken);
+      }
+      return refreshResponse;
+    },
+
+    async getAccessToken({commit}) {
+      const authRespone = await User.authorization(this.state.refreshToken);          
+      if (authRespone?.data?.accessToken) {        
+        localStorage.setItem('accessToken', authRespone.data.accessToken);
+        commit('setAccessToken', authRespone.data.accessToken);
+      }      
+      return authRespone;
+    },
+
+    // eslint-disable-next-line no-empty-pattern
+    async checkToken({}, token) {
+      try {
+        const response = await User.checkToken(token);        
+        if (response) {
+          return response;
+        }
       } catch (error) {
-        console.log('error', error);
+        console.log('CheckToken Error', error);
       }
     },
   },
-  getters: {
-    token: state => !!state.token,
+  getters: {    
+    refreshToken: state => state.refreshToken,
+    isRefreshToken: state => !!state.refreshToken,
+    isAccessToken: state => !!state.accessToken,
   },
 });

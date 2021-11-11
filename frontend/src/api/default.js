@@ -1,4 +1,5 @@
 import axios from 'axios';
+import store from '../store';
 
 axios.defaults.baseURL = process.env.VUE_APP_ROOT_API;
 
@@ -13,15 +14,13 @@ const HTTP = axios.create({
 });
 
 HTTP.interceptors.response.use(function(response) {
-    if (response?.data?.error_text === 'Недопустимый токен.') {
-        localStorage.removeItem('userToken');
-        localStorage.removeItem('userId');
-        window.location.reload();
+    if (response.config.url.includes('/debug/me') && response.status === 401) {
+        localStorage.removeItem('accesToken');
+        store.dispatch('getAccessToken', store.getters.refreshToken);                
     }
     return response;
 }, function(error) {
     console.log('error', error);
-
     return Promise.reject(error);
 });
 

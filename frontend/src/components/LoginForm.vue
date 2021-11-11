@@ -67,10 +67,9 @@ export default {
       const response = await this.$store.dispatch('login', {
         username: this.form.username.value,
         password: this.form.password.value,
-      });
-      
+      });      
       if (response && response.status === 200) {
-          this.resetForm();       
+          this.resetForm();          
           this.$router.push('/');
         } else {          
           this.isError = true;    

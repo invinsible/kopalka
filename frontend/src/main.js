@@ -19,14 +19,11 @@ const startApp = () => {
   }).$mount('#app');
 };
 
-startApp();
-
-// if (localStorage.getItem('userToken')) {
-//   store.dispatch('user/getUser', Number(localStorage.getItem('userId')))
-//       .then(response => {
-//         console.log('response', response);
-//         startApp();
-//       });
-// } else {
-//   startApp();
-// }
+if (localStorage.getItem('accessToken')) {
+  store.dispatch('checkToken', localStorage.getItem('accessToken'))
+      .then(() => {
+        startApp();      
+      });
+} else {
+  startApp();
+}
