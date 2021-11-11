@@ -6,7 +6,7 @@ export default {
             url: 'https://kopalka.paaashka.ru/api/auth/refresh',
             method: 'POST',
             data: {
-                refresh_token: refreshToken, 
+                refreshToken, 
             },           
         });
     },

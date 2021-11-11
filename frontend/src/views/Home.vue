@@ -2,7 +2,7 @@
   <b-container class="main-page">
     <h1>привет юзернейм  ({{ isRefreshToken }})</h1>
     <b-table striped hover :items="items"></b-table>
-    <a @click.prevent="logout">Выйти</a>
+    <a @click.prevent="logout">Проверить токен</a>
   </b-container>
 </template>
 

@@ -14,9 +14,9 @@ const HTTP = axios.create({
 });
 
 HTTP.interceptors.response.use(function(response) {
-    if (response.config.url.includes('/debug/me') && response.status === 401) {
+    if (response.status === 401) {
         localStorage.removeItem('accesToken');
-        store.dispatch('getAccessToken', store.getters.refreshToken);                
+        store.dispatch('getAccessToken', store.getters.refreshToken);
     }
     return response;
 }, function(error) {
