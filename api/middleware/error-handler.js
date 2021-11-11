@@ -4,7 +4,7 @@ module.exports = async (ctx, next) => {
     } catch (err) {
         const { statusCode, message } = err;
         ctx.type = 'json';
-        ctx.status = statusCode;
+        ctx.status = statusCode || 500;
         ctx.body = {
             error: message
         };
