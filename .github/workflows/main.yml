@@ -61,6 +61,7 @@ jobs:
 
   # Deploy
   deploy:
+    needs: [build-api, build-front]
     runs-on: ubuntu-latest
 
     steps:
@@ -72,5 +73,5 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: 22
           script: |
-            whoami
-            ls -al
+            cd ~/kopalka
+            docker-compose pull && docker-compose up -d
