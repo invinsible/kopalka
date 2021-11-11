@@ -1,14 +1,13 @@
 require('dotenv').config();
 
 const Koa = require('koa');
-const Router = require('koa-router');
 const cors = require('@koa/cors');
 const bodyParser = require('koa-bodyparser');
 const koajwt = require('koa-jwt');
-const errorHandlerMiddleware = require('.//middleware/error-handler.js')
+const errorHandlerMiddleware = require('./middleware/error-handler.js')
 
 const routes = require('./routes')
-const {sequelize, models} = require('./models')
+const {sequelize} = require('./models')
 
 
 // App
