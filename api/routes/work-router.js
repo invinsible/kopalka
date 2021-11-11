@@ -1,9 +1,15 @@
 const Router = require('koa-router');
 const {models} = require("../models");
+const WorkService = require('../services/work-service')
+const dayjs = require("dayjs");
 
 const router = new Router({prefix: '/work'});
 router.use(require('../middleware/auth-required'))
 
+const workService = new WorkService();
+
+
+// Список вариантов добычи и кол-ва предметов у пользователя
 router.get('/items', async function (ctx) {
     let result = [];
 
@@ -23,5 +29,38 @@ router.get('/items', async function (ctx) {
 
     ctx.body = result;
 });
+
+// Начало работы
+router.post('/start', async function (ctx) {
+    // const cycle = WorkService.get
+
+    try {
+        const newCycle = await workService.start(ctx.state.user.data.id);
+
+        console.log(newCycle.time_start);
+
+        ctx.body = {
+            result: 'success',
+            timeStart: newCycle.time_start
+        }
+
+    } catch (err) {
+        ctx.throw(400, err.message)
+    }
+
+});
+
+// Вернуть статус
+router.get('/status', async function (ctx) {
+
+    const currentCycle = await workService.getCurrent(ctx.state.user.data.id);
+
+    ctx.body = currentCycle === null ? {} : {
+        id: currentCycle.id,
+        timeStart: dayjs(currentCycle.time_start).valueOf(),
+        timeEnd: dayjs(currentCycle.time_end).valueOf(),
+    };
+});
+
 
 module.exports = router.routes();
