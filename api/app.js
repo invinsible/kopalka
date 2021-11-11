@@ -1,39 +1,14 @@
+require('dotenv').config();
+
 const Koa = require('koa');
 const Router = require('koa-router');
 const cors = require('@koa/cors');
 const bodyParser = require('koa-bodyparser');
-const {Sequelize, DataTypes} = require('sequelize');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const koajwt = require('koa-jwt');
 const errorHandlerMiddleware = require('.//middleware/error-handler.js')
 
-require('dotenv').config();
-
-const sequelize = new Sequelize({
-    dialect: "mysql",
-    host: process.env.MYSQL_HOST,
-    username: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE,
-});
-
-
-// Models
-const User = sequelize.define('user', {
-    id: {
-        type: DataTypes.UUID,
-        primaryKey: true
-    },
-    username: {
-        type: DataTypes.STRING
-    },
-    password: {
-        type: DataTypes.STRING(36),
-    }
-}, {
-    timestamps: false
-});
+const routes = require('./routes')
+const {sequelize, models} = require('./models')
 
 
 // App
@@ -47,63 +22,15 @@ async function main() {
         console.error('Unable to connect to the database:', error);
     }
 
-    // Creating router
-    const router = new Router();
-
-    // Basic healthcheck
-    router.get('/healthcheck', (ctx) => {
-        ctx.body = 'ok';
-    });
-
-    // Request new token
-    router.post('/auth/login', async function (ctx) {
-        const {body} = ctx.request;
-
-        const user = await User.findOne({
-            where: {username: body.username}
-        })
-
-        if (user === null || false === (await bcrypt.compare(body.password, user.password))) {
-            ctx.throw(400, 'Wrong username or password');
-        }
-
-        const
-            tokenExpiration = Math.floor(Date.now() / 1000) + (60 * 60),
-            token = jwt.sign({
-                exp: tokenExpiration,
-                data: {
-                    id: user.id
-                }
-            }, process.env.JWT_HMAC,
-            {algorithm: 'HS256'}
-        );
-
-        ctx.body = {
-            accessToken: token,
-            expiresAt: tokenExpiration
-        };
-    });
-
-    // Private endpoints
-    router.use(koajwt({secret: process.env.JWT_HMAC}))
-
-    // Enpoint with auth
-    router.get('/debug/me', async function (ctx) {
-        const user = await User.findByPk(ctx.state.user.data.id);
-
-        ctx.body = {
-            id: user.id,
-            username: user.username
-        }
-    });
-
-
     // Starting app
+    app.use(koajwt({secret: process.env.JWT_HMAC, passthrough: true}));
     app.use(errorHandlerMiddleware)
     app.use(cors({origin: '*'}));
     app.use(bodyParser());
-    app.use(router.routes());
-    app.use(router.allowedMethods())
+
+    app.use(routes.routes())
+    app.use(routes.allowedMethods());
+
     app.listen(3000);
 }
 
