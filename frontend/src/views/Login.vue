@@ -1,7 +1,7 @@
 <template>
   <b-container class="login-page">
     <b-row alignV="center" alignH="center" class="minHeight100">
-      <b-col cols="4">
+      <b-col cols="4" sm="8" md="4">
         <login-form />
       </b-col>
     </b-row>
