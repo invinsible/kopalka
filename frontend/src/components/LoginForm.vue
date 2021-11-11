@@ -63,18 +63,17 @@ export default {
     },
   },  
   methods: {
-    async login() {      
+    async login() {
       const response = await this.$store.dispatch('login', {
         username: this.form.username.value,
         password: this.form.password.value,
       });      
-      if (response && response.status === 200) {
+      if (response) {
           this.resetForm();          
           this.$router.push('/');
         } else {          
           this.isError = true;    
-        } 
-      
+        }      
     },
 
     resetValidNotice() {

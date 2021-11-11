@@ -2,7 +2,7 @@
   <b-container class="main-page">
     <h1>привет юзернейм  ({{ isRefreshToken }})</h1>
     <b-table striped hover :items="items"></b-table>
-    <a @click.prevent="logout">Проверить токен</a>
+    <a @click.prevent="check">Проверить токен</a>
   </b-container>
 </template>
 
@@ -28,7 +28,7 @@ export default {
     ]),
   },
   methods: {
-    async logout() {
+    async check() {
       try {
         const response = await User.checkToken(localStorage.getItem('accessToken'));
         console.log(response);

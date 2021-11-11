@@ -1,4 +1,5 @@
 import axios from 'axios';
+import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import store from '../store';
 
 axios.defaults.baseURL = process.env.VUE_APP_ROOT_API;
@@ -8,20 +9,14 @@ const HTTP = axios.create({
     headers: {
         'Content-type': 'application/json',
     },
-    validateStatus(status) {
-        return status >= 200 && status <= 500;
-    },
 });
 
-HTTP.interceptors.response.use(function(response) {
-    if (response.status === 401) {
-        localStorage.removeItem('accesToken');
-        store.dispatch('getAccessToken', store.getters.refreshToken);
-    }
-    return response;
-}, function(error) {
-    console.log('error', error);
-    return Promise.reject(error);
-});
+const refreshAuthLogic = async failedRequest => {
+    const response = await store.dispatch('getAccessToken', store.getters.refreshToken);    
+    failedRequest.response.config.headers.Authorization = 'Bearer ' + response.data.accessToken;
+    return Promise.resolve();
+};
+
+createAuthRefreshInterceptor(HTTP, refreshAuthLogic);
 
 export default HTTP;

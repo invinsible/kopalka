@@ -22,16 +22,15 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    async login({dispatch, commit}, data) {
-     const refreshResponse = await dispatch('getRefreshToken', data);
-     if (refreshResponse.status === 200) {
-      const accessResponse = await dispatch('getAccessToken');
-      commit('setUser', accessResponse.data.username);
-      return accessResponse;
-     }
-     if (refreshResponse.status === 400) {
-      return refreshResponse;
-     }
+    async login({dispatch}, data) {
+      try {
+        await dispatch('getRefreshToken', data);
+        await dispatch('getAccessToken');
+        return true;
+      } catch (e) {
+        console.log(e);
+        return false;
+      }
     },
 
     async getRefreshToken({commit}, data) {
