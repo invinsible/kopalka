@@ -1,3 +1,5 @@
+const {user} = require('../lib/enums')
+
 module.exports = function (sequelize, DataTypes) {
     return sequelize.define('user', {
         id: {
@@ -9,7 +11,11 @@ module.exports = function (sequelize, DataTypes) {
         },
         password: {
             type: DataTypes.STRING(36),
-        }
+        },
+        state: {
+            type: DataTypes.INTEGER,
+            default: user.states.INACTIVE
+        },
     }, {
         timestamps: false
     });
