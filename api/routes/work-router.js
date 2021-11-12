@@ -32,30 +32,36 @@ router.get('/items', async function (ctx) {
 
 // Начало работы
 router.post('/start', async function (ctx) {
-    // const cycle = WorkService.get
-
     try {
         const newCycle = await workService.start(ctx.state.user.data.id);
 
-        console.log(newCycle.time_start);
-
         ctx.body = {
-            result: 'success',
-            timeStart: newCycle.time_start
+            id: newCycle.id,
+            timeStart: dayjs(newCycle.time_start).valueOf(),
+            timeEnd: dayjs(newCycle.time_end).valueOf(),
         }
 
     } catch (err) {
         ctx.throw(400, err.message)
     }
-
 });
 
 // Вернуть статус
 router.get('/status', async function (ctx) {
+    let currentCycle = await workService.getCurrent(ctx.state.user.data.id);
 
-    const currentCycle = await workService.getCurrent(ctx.state.user.data.id);
+    // Проверяем, не закончен ли цикл
+    if (currentCycle !== null && workService.hasEnded(currentCycle)) {
+        await workService.end(currentCycle);
+        currentCycle = null;
+    }
 
-    ctx.body = currentCycle === null ? {} : {
+    if (currentCycle === null) {
+        ctx.body = {};
+        return;
+    }
+
+    ctx.body = {
         id: currentCycle.id,
         timeStart: dayjs(currentCycle.time_start).valueOf(),
         timeEnd: dayjs(currentCycle.time_end).valueOf(),

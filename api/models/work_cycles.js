@@ -1,3 +1,5 @@
+const {workCycle} = require('../lib/enums')
+
 module.exports = function (sequelize, DataTypes) {
     return sequelize.define('work_cycle', {
         id: {
@@ -7,7 +9,7 @@ module.exports = function (sequelize, DataTypes) {
         user_id: DataTypes.UUID,
         state: {
             type: DataTypes.INTEGER,
-            default: 1
+            default: workCycle.states.IN_PROGRESS
         },
         time_start: DataTypes.DATE,
         time_end: DataTypes.DATE,

@@ -1,13 +1,14 @@
 const dayjs = require("dayjs");
 const {v4} = require("uuid");
 const {models} = require("../models");
+const enums = require('../lib/enums')
 
 /**
  * Класс для работы с добычей
  */
 class WorkService {
     getDuration() {
-        return 3*60;
+        return 3 * 60;
     }
 
     /**
@@ -21,7 +22,9 @@ class WorkService {
             throw new Error('User not found')
         }
 
-        if (user.state !== user.states.INACTIVE) {
+        const currentCycle = await this.getCurrent(userId);
+
+        if (currentCycle !== null || user.state !== enums.user.states.INACTIVE) {
             throw new Error('User is not inactive')
         }
 
@@ -32,9 +35,30 @@ class WorkService {
             time_end: dayjs().add(this.getDuration(), 's').format('YYYY-MM-DD HH:mm:ss'),
         });
 
-        await models.User.update({state: user.states.WORKING}, {where: {id: user.id}})
+        await models.User.update({state: enums.user.states.WORKING}, {where: {id: user.id}})
 
         return newCycle;
+    }
+
+    /**
+     * Корректное завершение цикла
+     * @return {Promise<void>}
+     */
+    async end(workCycle) {
+        if (workCycle.state !== 1) {
+            throw new Error('Work cycle is not in progress');
+        }
+
+        await models.WorkCycle.update(
+            {
+                state: enums.workCycle.states.FINISHED,
+            },
+            {
+                where: {id: workCycle.id}
+            }
+        );
+
+        await models.User.update({state: enums.user.states.INACTIVE}, {where: {id: workCycle.user_id}});
     }
 
     /**
@@ -60,6 +84,19 @@ class WorkService {
         }
 
         return cycle;
+    }
+
+    /**
+     * Возвращает true, если цикл должен быть завершён
+     * @param workCycle
+     * @return boolean
+     */
+    hasEnded(workCycle) {
+        if ((new Date).getTime() < dayjs(workCycle.time_end).valueOf()) {
+            return false;
+        }
+
+        return workCycle.state === enums.workCycle.states.IN_PROGRESS;
     }
 }
 

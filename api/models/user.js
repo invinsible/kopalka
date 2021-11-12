@@ -1,7 +1,4 @@
-const states = {
-    INACTIVE: 0,
-    WORKING: 1
-};
+const {user} = require('../lib/enums')
 
 module.exports = function (sequelize, DataTypes) {
     return sequelize.define('user', {
@@ -17,14 +14,8 @@ module.exports = function (sequelize, DataTypes) {
         },
         state: {
             type: DataTypes.INTEGER,
-            default: states.INACTIVE
+            default: user.states.INACTIVE
         },
-        states: {
-            type: DataTypes.VIRTUAL,
-            get() {
-                return states;
-            }
-        }
     }, {
         timestamps: false
     });
