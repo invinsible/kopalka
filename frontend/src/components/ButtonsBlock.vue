@@ -53,7 +53,7 @@ export default {
     async startWork() {
       const response = await User.startWork(localStorage.getItem('accessToken'));
       this.$store.commit('setStatus', response.data.cycle);
-      const timeDifference = this.workStatus.timeEnd - Date.now();
+      const timeDifference = this.workStatus.timeEnd - Date.now() + 1000;
       this.timerCount = timeDifference;
       setTimeout(() => {
         this.getStatus();
