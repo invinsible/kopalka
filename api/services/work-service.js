@@ -8,7 +8,8 @@ const enums = require('../lib/enums')
  */
 class WorkService {
     getDuration() {
-        return 3 * 60;
+        // return 3 * 60; @todo
+        return 10;
     }
 
     /**
@@ -48,6 +49,8 @@ class WorkService {
         if (workCycle.state !== 1) {
             throw new Error('Work cycle is not in progress');
         }
+
+        // @todo определять приз
 
         await models.WorkCycle.update(
             {
@@ -97,6 +100,14 @@ class WorkService {
         }
 
         return workCycle.state === enums.workCycle.states.IN_PROGRESS;
+    }
+
+    /**
+     * Возвращает сгенерированный результат копки
+     * @return {Promise<void>}
+     */
+    async getCycleResult(workCycle) {
+
     }
 }
 
