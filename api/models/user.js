@@ -16,6 +16,7 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.INTEGER,
             default: user.states.INACTIVE
         },
+        work_exp: DataTypes.INTEGER
     }, {
         timestamps: false
     });

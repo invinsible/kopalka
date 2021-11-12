@@ -50,6 +50,12 @@ router.post('/start', async function (ctx) {
 
 // Вернуть статус
 router.get('/status', async function (ctx) {
+    const previousCycle = await workService.getPrevious(ctx.state.user.data.id),
+        previous = {
+            timeEnd: dayjs(previousCycle.time_end).valueOf(),
+            itemName: previousCycle.item ? previousCycle.item.name : null,
+            quantity: previousCycle.quantity
+        };
     let currentCycle = await workService.getCurrent(ctx.state.user.data.id);
 
     // Проверяем, не закончен ли цикл
@@ -60,7 +66,8 @@ router.get('/status', async function (ctx) {
 
     if (currentCycle === null) {
         ctx.body = {
-            cycle: null
+            cycle: null,
+            previous
         };
         return;
     }
@@ -70,7 +77,8 @@ router.get('/status', async function (ctx) {
             id: currentCycle.id,
             timeStart: dayjs(currentCycle.time_start).valueOf(),
             timeEnd: dayjs(currentCycle.time_end).valueOf(),
-        }
+        },
+        previous
     };
 });
 

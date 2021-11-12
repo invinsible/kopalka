@@ -11,5 +11,10 @@ module.exports = {
             FINISHED: 2,
             CANCELED: 3
         }
+    },
+    item: {
+        types: {
+            RESOURCE: 1
+        }
     }
 };

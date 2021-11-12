@@ -19,6 +19,8 @@ const models = {
 // Creating associations
 models.Item.hasMany(models.InventoryItem, {foreignKey: 'item_id'})
 models.InventoryItem.belongsTo(models.Item, {foreignKey: 'item_id'})
+models.WorkCycle.belongsTo(models.User, {foreignKey: 'user_id'})
+models.WorkCycle.belongsTo(models.Item, {foreignKey: 'item_id'})
 
 module.exports = {
     sequelize,
