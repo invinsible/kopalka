@@ -58,7 +58,7 @@ class WorkService {
             throw new Error('Work cycle is not in progress');
         }
 
-        // Определяем выигрыш
+        // Определяем добычу
         const item = await this.getCycleResult(workCycle),
             itemQuantity = 1;
 
@@ -72,6 +72,7 @@ class WorkService {
         await this.inventoryService.changeItemQuantity(workCycle.user_id, item, itemQuantity);
 
         // @todo Начислить опыт добычи
+
 
         await models.User.update({state: enums.user.states.INACTIVE}, {where: {id: workCycle.user_id}});
     }
@@ -99,6 +100,19 @@ class WorkService {
         }
 
         return cycle;
+    }
+
+    /**
+     * Возвращает предыдущий завершённый цикл
+     * @param userId
+     * @return {Promise<*>}
+     */
+    async getPrevious(userId) {
+        return await models.WorkCycle.findOne({
+            where: {user_id: userId, state: enums.workCycle.states.FINISHED},
+            order: [['time_end', 'DESC']],
+            include: ['item']
+        })
     }
 
     /**
