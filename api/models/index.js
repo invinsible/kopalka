@@ -13,6 +13,7 @@ const models = {
     Token: require('./token')(sequelize, DataTypes),
     Item: require('./item')(sequelize, DataTypes),
     InventoryItem: require('./inventory_item')(sequelize, DataTypes),
+    WorkCycle: require('./work_cycles')(sequelize, DataTypes),
 };
 
 // Creating associations
