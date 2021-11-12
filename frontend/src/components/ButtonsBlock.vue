@@ -1,14 +1,16 @@
 <template>
-  <div>
-    <user-status :status="isWork" :result="result" :timerCount="timerCount" />
+  <div v-if="load">
+    <user-status :status="workStatus" :result="result" :timerCount="timerCount" />
     <b-button-group>
-      <b-button v-if="!isWork" @click.prevent="startWork" variant="info">Собирать травы</b-button>  
+      <b-button v-if="!workStatus.cycle" @click.prevent="startWork" variant="info">Собирать травы</b-button>  
       <b-button @click.prevent="check" variant="warning">Проверить токен</b-button>     
     </b-button-group>    
   </div>  
+  <b-spinner v-else variant="primary" type="grow" label="Spinning"></b-spinner>
 </template>
 
 <script>
+import {mapGetters} from 'vuex';
 import User from '@/api/user';
 import UserStatus from '@/components/UserStatus.vue';
 export default {
@@ -18,12 +20,26 @@ export default {
   },
   data() {
     return {
-      isWork: false,
       result: '',
       timerCount: 30,
     };
   },
+  computed: {
+    ...mapGetters([
+      'workStatus',      
+    ]),
+    load() {
+      return this.workStatus;
+    },
+  },
+  created() {
+    this.getStatus();
+  },
   methods: {
+    getStatus() {
+      this.$store.dispatch('getStatus', localStorage.getItem('accessToken'));
+    },
+
     async check() {
       try {
         const response = await User.checkToken(
@@ -35,13 +51,9 @@ export default {
       }
     },
 
-    startWork() {
-      this.isWork = true;
-      this.result = '';
-      setTimeout(() => {        
-        this.isWork = false;
-        this.result = 'жёлудь';
-      }, 30000);
+    async startWork() {
+      const response = await User.startWork(localStorage.getItem('accessToken'));
+      this.$store.commit('setStatus', response.data);
     },
   },
 };

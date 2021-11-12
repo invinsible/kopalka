@@ -33,7 +33,7 @@ export default {
     ...mapGetters(['inventory', 'table']),
   },
   created() {
-    this.getTable();
+    this.getTable();   
   },
   methods: {    
     async getInventory() {
@@ -49,7 +49,7 @@ export default {
         localStorage.getItem('accessToken'),
       );
       this.isLoad = false;
-    },
+    },    
   },
 };
 </script>

@@ -47,4 +47,24 @@ export default {
             },
         });
     },
+
+    getStatus(accessToken){
+        return HTTP({
+            url: 'https://kopalka.paaashka.ru/api/work/status',
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+    },
+
+    startWork(accessToken){
+        return HTTP({
+            url: 'https://kopalka.paaashka.ru/api/work/start',
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+    },
 };

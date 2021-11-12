@@ -7,6 +7,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     user: null,
+    workStatus: null,
     refreshToken: localStorage.getItem('refreshToken') || null,
     accessToken: localStorage.getItem('accessToken') || null,
     inventory: null,
@@ -27,6 +28,9 @@ export default new Vuex.Store({
     },
     setInventory(state, value) {      
       state.inventory = value;
+    },
+    setStatus(state, value) {
+      state.workStatus = value;
     },
   },
   actions: {
@@ -94,6 +98,11 @@ export default new Vuex.Store({
         console.log('GetTable Error', error);
       }
     },
+
+    async getStatus({commit}, token) {
+      const response = await User.getStatus(token);     
+      commit('setStatus', response.data);
+    },
   },
   getters: {    
     refreshToken: state => state.refreshToken,
@@ -106,5 +115,6 @@ export default new Vuex.Store({
       }
       return state.table.sort(byField('rate'));
     },
+    workStatus: state => state.workStatus,
   },
 });

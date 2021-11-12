@@ -2,9 +2,9 @@
   <div>
     <p>Ваше умение собирателя трав: 1</p>
     <p>Ваш опыт собирателя трав: 0</p>
-    <div v-if="status">
-      <p>Вы собираете травы. Ещё собирать {{ timerCountSec }}</p>
-      <div class="progress">
+    <div v-if="status.cycle">
+      <p>Вы собираете травы. Ещё собирать и собирать</p>
+      <!-- <div class="progress">
         <div
           class="progress-bar progress-bar-striped progress-bar-animated"
           role="progressbar"
@@ -13,7 +13,7 @@
           aria-valuemax="30"
           :style="progressStyle"
         ></div>
-      </div>
+      </div> -->
     </div>
     <p v-if="result">Вы собрали {{ result }} в количестве 1 шт.</p>    
   </div>
@@ -24,8 +24,8 @@ export default {
   name: 'UserStatus',
   props: {
     status: {
-      type: Boolean,
-      default: false,
+      type: Object,
+      default: null,
     },
     result: {
       type: String,
@@ -41,28 +41,26 @@ export default {
       timerCountSec: this.timerCount,
     };
   },
-  computed: {    
+  computed: {   
     progressStyle() {
        return `width:${this.timerCountSec}%`;
      },
-  },
-  watch: {
-    timerCountSec: {
-      handler(value) {
-        if (value > 0 ) {
-          setTimeout(() => {
-            this.timerCount--;
-          }, 1000);
-        }
-        if (value === 0) {
-          this.isWork = false;
-        }
-      },
-      immediate: true, // This ensures the watcher is triggered upon creation
-    },
   },  
-  methods: {
-
+  watch: {
+    // timerCountSec: {
+    //   handler(value) {
+    //     if (value > 0 ) {
+    //       setTimeout(() => {
+    //         this.timerCount--;
+    //       }, 1000);
+    //     }
+    //     if (value === 0) {
+    //       this.isWork = false;
+    //     }
+    //   },
+    //   immediate: true, 
+    // },
   },
+
 };
 </script>
