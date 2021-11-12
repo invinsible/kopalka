@@ -36,9 +36,11 @@ router.post('/start', async function (ctx) {
         const newCycle = await workService.start(ctx.state.user.data.id);
 
         ctx.body = {
-            id: newCycle.id,
-            timeStart: dayjs(newCycle.time_start).valueOf(),
-            timeEnd: dayjs(newCycle.time_end).valueOf(),
+            cycle: {
+                id: newCycle.id,
+                timeStart: dayjs(newCycle.time_start).valueOf(),
+                timeEnd: dayjs(newCycle.time_end).valueOf(),
+            }
         }
 
     } catch (err) {
@@ -57,14 +59,18 @@ router.get('/status', async function (ctx) {
     }
 
     if (currentCycle === null) {
-        ctx.body = {};
+        ctx.body = {
+            cycle: null
+        };
         return;
     }
 
     ctx.body = {
-        id: currentCycle.id,
-        timeStart: dayjs(currentCycle.time_start).valueOf(),
-        timeEnd: dayjs(currentCycle.time_end).valueOf(),
+        cycle: {
+            id: currentCycle.id,
+            timeStart: dayjs(currentCycle.time_start).valueOf(),
+            timeEnd: dayjs(currentCycle.time_end).valueOf(),
+        }
     };
 });
 
