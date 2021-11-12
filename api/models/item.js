@@ -7,7 +7,8 @@ module.exports = function (sequelize, DataTypes) {
         name: {
             type: DataTypes.STRING
         },
-        rate: DataTypes.INTEGER.UNSIGNED
+        rate: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.INTEGER.UNSIGNED,
     }, {
         timestamps: false
     });
