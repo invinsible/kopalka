@@ -1,9 +1,9 @@
 <template>
-  <div v-if="load">
+  <div v-if="!isLoad">
     <user-status :status="workStatus" :result="result" :timerCount="timerCount" />
     <b-button-group>
-      <b-button v-if="!workStatus.cycle" @click.prevent="startWork" variant="info">Собирать травы</b-button>  
-      <b-button @click.prevent="check" variant="warning">Проверить токен</b-button>     
+      <b-button v-if="!workStatus" @click.prevent="startWork" variant="info">Собирать травы</b-button>  
+      <b-button @click.prevent="getStatus" variant="warning">Проверить токен</b-button>     
     </b-button-group>    
   </div>  
   <b-spinner v-else variant="primary" type="grow" label="Spinning"></b-spinner>
@@ -21,23 +21,22 @@ export default {
   data() {
     return {
       result: '',
-      timerCount: 30,
+      timerCount: 0,
+      isLoad: true,
     };
   },
   computed: {
     ...mapGetters([
       'workStatus',      
     ]),
-    load() {
-      return this.workStatus;
-    },
   },
   created() {
-    this.getStatus();
+    this.getStatus();    
   },
   methods: {
-    getStatus() {
-      this.$store.dispatch('getStatus', localStorage.getItem('accessToken'));
+    async getStatus() {
+      await this.$store.dispatch('getStatus', localStorage.getItem('accessToken'));  
+      this.isLoad = false;    
     },
 
     async check() {
@@ -53,7 +52,12 @@ export default {
 
     async startWork() {
       const response = await User.startWork(localStorage.getItem('accessToken'));
-      this.$store.commit('setStatus', response.data);
+      this.$store.commit('setStatus', response.data.cycle);
+      const timeDifference = this.workStatus.timeEnd - Date.now();
+      this.timerCount = timeDifference;
+      setTimeout(() => {
+        this.getStatus();
+      }, timeDifference);
     },
   },
 };

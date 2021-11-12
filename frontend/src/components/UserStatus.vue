@@ -1,9 +1,9 @@
 <template>
   <div>
     <p>Ваше умение собирателя трав: 1</p>
-    <p>Ваш опыт собирателя трав: 0</p>
-    <div v-if="status.cycle">
-      <p>Вы собираете травы. Ещё собирать и собирать</p>
+    <p>Ваш опыт собирателя трав: 0</p>    
+    <div v-if="status">
+      <p>Вы собираете травы. Ещё собирать {{ counterTransform }}</p>
       <!-- <div class="progress">
         <div
           class="progress-bar progress-bar-striped progress-bar-animated"
@@ -44,6 +44,11 @@ export default {
   computed: {   
     progressStyle() {
        return `width:${this.timerCountSec}%`;
+     },
+     counterTransform() {
+      const min = Math.floor((this.timerCount / 1000 / 60) << 0);
+      const sec = Math.floor((this.timerCount / 1000) % 60);
+       return `${min} мин ${sec} сек`;
      },
   },  
   watch: {
