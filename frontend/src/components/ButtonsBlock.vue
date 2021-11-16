@@ -67,6 +67,7 @@ export default {
         this.isLoad = true;
         this.getStatus().then(resp => {
           this.$store.commit('setWorkResult', resp.previous);
+          this.$store.dispatch('getTable', localStorage.getItem('accessToken'));
         });
       }, timeDifference);
     },
