@@ -8,6 +8,7 @@ export default new Vuex.Store({
   state: {
     user: null,
     workStatus: null,
+    workResult: '',
     refreshToken: localStorage.getItem('refreshToken') || null,
     accessToken: localStorage.getItem('accessToken') || null,
     inventory: null,
@@ -31,6 +32,9 @@ export default new Vuex.Store({
     },
     setStatus(state, value) {
       state.workStatus = value;
+    },
+    setWorkResult(state, value) {
+      state.workResult = value;
     },
   },
   actions: {
@@ -90,7 +94,7 @@ export default new Vuex.Store({
     async getTable({commit}, token) {
       try {
         const response = await User.getTable(token);        
-        if (response) {
+        if (response) {      
           commit('setTable', response.data);
           return;
         }
@@ -99,10 +103,11 @@ export default new Vuex.Store({
       }
     },
 
-    async getStatus({commit}, token) {
-      const response = await User.getStatus(token);
-      commit('setStatus', response.data?.cycle);
-    },
+    async getStatus({commit}, token) {      
+      const response = await User.getStatus(token);      
+      commit('setStatus', response.data.cycle);
+      return response;
+    },    
   },
   getters: {    
     refreshToken: state => state.refreshToken,
@@ -116,5 +121,6 @@ export default new Vuex.Store({
       return state.table.sort(byField('rate'));
     },
     workStatus: state => state.workStatus,
+    workResult: state => state.workResult,
   },
 });

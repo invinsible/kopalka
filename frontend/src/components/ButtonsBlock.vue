@@ -1,11 +1,15 @@
 <template>
   <div v-if="!isLoad">
-    <user-status :status="workStatus" :result="result" :timerCount="timerCount" />
+    <user-status :status="workStatus" :timerCount="timerCount" />
     <b-button-group>
-      <b-button v-if="!workStatus" @click.prevent="startWork" variant="info">Собирать травы</b-button>  
-      <b-button @click.prevent="getStatus" variant="warning">Проверить токен</b-button>     
-    </b-button-group>    
-  </div>  
+      <b-button v-if="!workStatus" @click.prevent="startWork" variant="info"
+        >Собирать травы</b-button
+      >
+      <b-button @click.prevent="getStatus" variant="warning"
+        >Проверить токен</b-button
+      >    
+    </b-button-group>
+  </div>
   <b-spinner v-else variant="primary" type="grow" label="Spinning"></b-spinner>
 </template>
 
@@ -20,23 +24,24 @@ export default {
   },
   data() {
     return {
-      result: '',
       timerCount: 0,
       isLoad: true,
     };
   },
   computed: {
-    ...mapGetters([
-      'workStatus',      
-    ]),
+    ...mapGetters(['workStatus']),
   },
   created() {
-    this.getStatus();    
+    this.getStatus();
   },
   methods: {
     async getStatus() {
-      await this.$store.dispatch('getStatus', localStorage.getItem('accessToken'));  
-      this.isLoad = false;    
+      const respone = await this.$store.dispatch(
+        'getStatus',
+        localStorage.getItem('accessToken'),
+      );     
+      this.isLoad = false;     
+      return respone.data;
     },
 
     async check() {
@@ -51,12 +56,18 @@ export default {
     },
 
     async startWork() {
-      const response = await User.startWork(localStorage.getItem('accessToken'));
-      this.$store.commit('setStatus', response.data.cycle);
+      const response = await User.startWork(
+        localStorage.getItem('accessToken'),
+      );     
+      this.$store.commit('setStatus', response.data.cycle);      
       const timeDifference = this.workStatus.timeEnd - Date.now() + 1000;
       this.timerCount = timeDifference;
+
       setTimeout(() => {
-        this.getStatus();
+        this.isLoad = true;
+        this.getStatus().then(resp => {          
+          this.$store.commit('setWorkResult', resp.previous);
+        });
       }, timeDifference);
     },
   },

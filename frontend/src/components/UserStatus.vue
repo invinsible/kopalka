@@ -15,21 +15,18 @@
         ></div>
       </div> -->
     </div>
-    <p v-if="result">Вы собрали {{ result }} в количестве 1 шт.</p>    
+    <p v-if="workResult && !status">{{ resultMessage }}</p>    
   </div>
 </template>
 
 <script>
+import {mapGetters} from 'vuex';
 export default {
   name: 'UserStatus',
   props: {
     status: {
       type: Object,
       default: null,
-    },
-    result: {
-      type: String,
-      default: '',
     },
     timerCount: {
       type: Number,
@@ -41,7 +38,10 @@ export default {
       timerCountSec: this.timerCount,
     };
   },
-  computed: {   
+  computed: {
+    ...mapGetters([
+      'workResult',
+    ]),
     progressStyle() {
        return `width:${this.timerCountSec}%`;
      },
@@ -49,6 +49,10 @@ export default {
       const min = Math.floor((this.timerCount / 1000 / 60) << 0);
       const sec = Math.floor((this.timerCount / 1000) % 60);
        return `${min} мин ${sec} сек`;
+     },
+     resultMessage() {
+       return this.workResult.itemName ? `Вы собрали ${this.workResult.itemName} в количестве ${this.workResult.quantity} шт.` : 'Трава оказалась пожухлой';
+       
      },
   },  
   watch: {
