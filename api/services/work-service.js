@@ -68,13 +68,15 @@ class WorkService {
             quantity: item ? itemQuantity : null
         }, {where: {id: workCycle.id}});
 
+        await models.User.update({state: enums.user.states.INACTIVE}, {where: {id: workCycle.user_id}});
+
         // Зачисляем предмет
-        await this.inventoryService.changeItemQuantity(workCycle.user_id, item, itemQuantity);
+        if (item !== null) {
+            await this.inventoryService.changeItemQuantity(workCycle.user_id, item, itemQuantity);
+        }
 
         // @todo Начислить опыт добычи
 
-
-        await models.User.update({state: enums.user.states.INACTIVE}, {where: {id: workCycle.user_id}});
     }
 
     /**
