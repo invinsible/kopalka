@@ -69,7 +69,9 @@ class WorkService {
         }, {where: {id: workCycle.id}});
 
         // Зачисляем предмет
-        await this.inventoryService.changeItemQuantity(workCycle.user_id, item, itemQuantity);
+        if (item !== null) {
+            await this.inventoryService.changeItemQuantity(workCycle.user_id, item, itemQuantity);
+        }
 
         // @todo Начислить опыт добычи
 
