@@ -7,7 +7,7 @@
       >
       <b-button @click.prevent="getStatus" variant="warning"
         >Проверить токен</b-button
-      >    
+      >
     </b-button-group>
   </div>
   <b-spinner v-else variant="primary" type="grow" label="Spinning"></b-spinner>
@@ -39,8 +39,8 @@ export default {
       const respone = await this.$store.dispatch(
         'getStatus',
         localStorage.getItem('accessToken'),
-      );     
-      this.isLoad = false;     
+      );
+      this.isLoad = false;
       return respone.data;
     },
 
@@ -58,14 +58,14 @@ export default {
     async startWork() {
       const response = await User.startWork(
         localStorage.getItem('accessToken'),
-      );     
-      this.$store.commit('setStatus', response.data.cycle);      
+      );
+      this.$store.commit('setStatus', response.data.cycle);
       const timeDifference = this.workStatus.timeEnd - Date.now() + 1000;
       this.timerCount = timeDifference;
 
       setTimeout(() => {
         this.isLoad = true;
-        this.getStatus().then(resp => {          
+        this.getStatus().then(resp => {
           this.$store.commit('setWorkResult', resp.previous);
         });
       }, timeDifference);
