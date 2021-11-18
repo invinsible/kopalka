@@ -53,7 +53,7 @@ router.get('/current', async function (ctx) {
 
 // Движение
 router.post('/move', async function (ctx) {
-    const mazeService = new MazeService();
+    const mazeService = new MazeService(userService);
     const {body} = ctx.request;
     if (!body || !body.direction) {
         ctx.throw(400, 'Direction is needed');
@@ -67,6 +67,19 @@ router.post('/move', async function (ctx) {
         y: result.y
     }
 });
+
+// Выход из лаба
+router.post('/exit', async function (ctx) {
+    const mazeService = new MazeService(userService);
+
+    const result = await mazeService.exit(ctx.state.user.data.id);
+    console.log(result);
+
+    ctx.body = {
+        result: 'success'
+    };
+});
+
 
 // Тестовое создание лабиринта
 // @deprecated

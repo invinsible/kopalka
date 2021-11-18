@@ -18,7 +18,7 @@ module.exports = function (sequelize, DataTypes) {
         visitedParsed: {
             type: DataTypes.VIRTUAL,
             get() {
-                return JSON.parse(this.visited);
+                return this.visited ? JSON.parse(this.visited) : null;
             }
         }
     }, {

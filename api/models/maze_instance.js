@@ -12,7 +12,7 @@ module.exports = function (sequelize, DataTypes) {
         dataParsed: {
             type: DataTypes.VIRTUAL,
             get() {
-                return JSON.parse(this.data);
+                return this.data ? JSON.parse(this.data) : null;
             }
         }
     }, {

@@ -80,10 +80,10 @@ class MazeService {
         let objects = [];
 
         // Entries
-        objects.push(this.buildNewObject(this.getRandomCell(maze), 'entry'))
+        objects.push(this.buildNewObject(this.getRandomCell(maze), 'entry'));
 
-        // Exits
-        objects.push(this.buildNewObject(this.getRandomCell(maze), 'stairs-down'))
+        // Stairs
+        objects.push(this.buildNewObject(this.getRandomCell(maze), 'stairs-down'));
 
         return objects;
     }
@@ -92,7 +92,7 @@ class MazeService {
         return {
             x: _.random(0, maze.width - 1),
             y: _.random(0, maze.height - 1),
-        }
+        };
     }
 
     buildNewObject(coords, type) {
@@ -137,8 +137,7 @@ class MazeService {
         const result = await sequelize.transaction(async (t) => {
             const updated = await models.User.update(
                 {state: enums.user.states.IN_MAZE},
-                {where: {id: user.id}},
-                {transaction: t}
+                {where: {id: user.id}, transaction: t}
             );
 
             const instance = await models.MazeInstance.create({
@@ -153,7 +152,8 @@ class MazeService {
                 user_id: user.id,
                 is_active: 1,
                 x: currentPosition.x,
-                y: currentPosition.y
+                y: currentPosition.y,
+                visited: JSON.stringify([[currentPosition.x, currentPosition.y]])
             }, {transaction: t});
 
 
@@ -236,6 +236,45 @@ class MazeService {
             x: newPosition.x,
             y: newPosition.y
         };
+    }
+
+    /**
+     * Выход из лабиринта.
+     * @param userId
+     * @return {Promise<boolean>}
+     */
+    async exit(userId) {
+        const user = await models.User.findByPk(userId);
+        if (user === null) {
+            throw new Error('User not found')
+        }
+
+        const current = await this.getUsersCurrentInstance(user.id);
+        if (!current) {
+            throw new Error('No active maze instance');
+        }
+
+        // @todo проверять, что человек стоит на выходе
+
+
+
+        await sequelize.transaction(async (t) => {
+            await models.User.update(
+                {state: enums.user.states.INACTIVE},
+                {where: {id: user.id}, transaction: t},
+            );
+
+            return await models.MazeInstanceUser.update(
+                {
+                    is_active: 0,
+                },
+                {
+                    where: {maze_instance_id: current.maze_instance_id, user_id: current.user_id},
+                    transaction: t
+                });
+        });
+
+        return true;
     }
 }
 

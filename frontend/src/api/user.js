@@ -120,4 +120,14 @@ export default {
             },
         });
     },
+
+    exit(accessToken){
+        return HTTP({
+            url: '/maze/exit',
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+    },
 };

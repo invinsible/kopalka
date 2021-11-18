@@ -30,6 +30,31 @@
       </b-col>
 
       <b-col>
+        <b-row class="mb-5">
+          <b-col>
+            <h5>Действия</h5>
+            <div class="mb-2">
+              <b-button variant="outline-secondary" @click="move('N')">
+                <b-icon-arrow-up></b-icon-arrow-up>
+              </b-button>
+              &nbsp;
+              <b-button variant="outline-secondary" @click="move('S')">
+                <b-icon-arrow-down></b-icon-arrow-down>
+              </b-button>
+              &nbsp;
+              <b-button variant="outline-secondary" @click="move('W')">
+                <b-icon-arrow-left></b-icon-arrow-left>
+              </b-button>
+              &nbsp;
+              <b-button variant="outline-secondary" @click="move('E')">
+                <b-icon-arrow-right></b-icon-arrow-right>
+              </b-button>
+            </div>
+            <div style="min-height: 38px;">
+              <b-button variant="danger" @click="exit()" v-if="currentCellHasEntry">Выйти</b-button>
+            </div>
+          </b-col>
+        </b-row>
         <b-row>
           <b-col><h5>Сумка</h5></b-col>
         </b-row>
@@ -69,8 +94,21 @@ export default {
   },
 
   computed: {
-    currentPositionCell() {
+    currentCell() {
+      if (!this.grid[this.currentPosition.y] || !this.grid[this.currentPosition.y][this.currentPosition.x]) {
+        return null;
+      }
+
       return this.grid[this.currentPosition.y][this.currentPosition.x];
+    },
+    currentCellHasEntry() {
+      if (!this.currentCell) {
+        return false;
+      }
+
+      return this.currentCell.objects.filter(item => {
+        return item.type === 'entry';
+      }).length === 1;
     },
   },
 
@@ -115,7 +153,7 @@ export default {
 
       // Находим и заполняем текущую позицию
       this.currentPosition = response.data.currentPosition;
-      this.currentPositionCell.fog = false;
+      this.currentCell.fog = false;
 
       this.loaded = true;
     },
@@ -210,7 +248,7 @@ export default {
     },
 
     async move(direction) {
-      if (this.currentPositionCell.walls & DIRECTIONS[direction]) {
+      if (this.currentCell.walls & DIRECTIONS[direction]) {
         return false;
       }
 
@@ -226,7 +264,7 @@ export default {
         y: response.data.y,
       };
 
-      this.onCellVisit(this.currentPositionCell);
+      this.onCellVisit(this.currentCell);
 
       return true;
     },
@@ -238,6 +276,20 @@ export default {
     onCellVisit(cell) {
       console.log('onVisitCell', cell);
       cell.fog = false;
+    },
+
+    /**
+     * Выход
+     * @return {Promise<void>}
+     */
+    async exit() {
+      const response = await User.exit(
+          localStorage.getItem('accessToken'),
+      );
+
+      if (response.data.result === 'success') {
+        await this.$router.push({name: 'MazeIntro'});
+      }
     },
   },
 };
