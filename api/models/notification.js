@@ -8,7 +8,8 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.UUID,
         },
         force: {
-            type: DataTypes.INTEGER
+            type: DataTypes.INTEGER,
+            default: 0
         },
         title: {
             type: DataTypes.STRING
