@@ -48,8 +48,8 @@
 import User from '@/api/user';
 
 const DIRECTIONS = {N: 1, S: 2, E: 4, W: 8};
-const DX = {N: 0, S: 0, E: 1, W: -1};
-const DY = {N: -1, S: 1, E: 0, W: 0};
+// const DX = {N: 0, S: 0, E: 1, W: -1};
+// const DY = {N: -1, S: 1, E: 0, W: 0};
 
 export default {
   name: 'Maze',
@@ -188,14 +188,21 @@ export default {
       }
     },
 
-    move(direction) {
+    async move(direction) {
       if (this.currentPositionCell.walls & DIRECTIONS[direction]) {
         return false;
       }
 
+      const response = await User.moveInMaze(
+          localStorage.getItem('accessToken'),
+          direction,
+      );
+
+      console.log(response.data);
+
       this.currentPosition = {
-        x: this.currentPosition.x + DX[direction],
-        y: this.currentPosition.y + DY[direction],
+        x: response.data.x,
+        y: response.data.y,
       };
 
       this.onCellVisit(this.currentPositionCell);

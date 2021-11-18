@@ -102,7 +102,7 @@ class MazeService {
         };
     }
 
-    getCurrentPosition(maze) {
+    getStartingPosition(maze) {
         const entries = [];
         for (const object of maze.objects) {
             if (object.type === 'entry') {
@@ -115,6 +115,15 @@ class MazeService {
         return randomEntry.coords
     }
 
+    async getUsersCurrentInstance(userId) {
+        const activeInstanceUser = await models.MazeInstanceUser.findOne({
+            where: {user_id: userId, is_active: 1},
+            include: ['maze_instance']
+        });
+
+        return !activeInstanceUser ? null : activeInstanceUser;
+    }
+
     /**
      * Создаёт инстанс лабиринта и отправляет туда пользователя.
      * @param userId
@@ -123,6 +132,7 @@ class MazeService {
     async start(userId) {
         const user = await this.userService.findInactive(userId);
         const maze = this.generate();
+        const currentPosition = this.getStartingPosition(maze);
 
         const result = await sequelize.transaction(async (t) => {
             const updated = await models.User.update(
@@ -141,7 +151,9 @@ class MazeService {
             const instanceUser = await models.MazeInstanceUser.create({
                 maze_instance_id: instance.id,
                 user_id: user.id,
-                is_active: 1
+                is_active: 1,
+                x: currentPosition.x,
+                y: currentPosition.y
             }, {transaction: t});
 
 
@@ -181,15 +193,45 @@ class MazeService {
             throw new Error('User not found')
         }
 
-        const activeInstanceUser = await models.MazeInstanceUser.findOne({
-            where: {user_id: user.id, is_active: 1}
-        });
+        return await this.getUsersCurrentInstance(user.id);
+    }
 
-        if (!activeInstanceUser) {
-            return null;
+    /**
+     * Перемещает пользователя в указанном направлении
+     * @param userId
+     * @param direction
+     * @return {Promise<void>}
+     */
+    async move(userId, direction) {
+        const user = await models.User.findByPk(userId);
+        if (user === null) {
+            throw new Error('User not found')
         }
 
-        return activeInstanceUser;
+        const current = await this.getUsersCurrentInstance(user.id),
+            maze = current.maze_instance.dataParsed,
+            currentPosition = {x: current.x, y: current.y};
+
+        const newPosition = {
+            x: currentPosition.x + DX[direction],
+            y: currentPosition.y + DY[direction]
+        };
+
+        if (maze.cells[newPosition.y] === undefined || maze.cells[newPosition.y][newPosition.x] === undefined) {
+            throw new Error('Wrong move');
+        }
+
+        // @todo проверить, нет ли стен
+
+        await models.MazeInstanceUser.update({
+            x: newPosition.x,
+            y: newPosition.y
+        }, {where: {maze_instance_id: current.maze_instance_id, user_id: current.user_id}});
+
+        return {
+            x: newPosition.x,
+            y: newPosition.y
+        };
     }
 }
 

@@ -8,7 +8,13 @@ module.exports = function (sequelize, DataTypes) {
         created_by: {
             type: DataTypes.UUID
         },
-        data: DataTypes.TEXT
+        data: DataTypes.TEXT,
+        dataParsed: {
+            type: DataTypes.VIRTUAL,
+            get() {
+                return JSON.parse(this.data);
+            }
+        }
     }, {
         timestamps: true,
         createdAt: 'created_at',

@@ -12,6 +12,8 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.INTEGER,
             default: 1
         },
+        x: DataTypes.INTEGER,
+        y: DataTypes.INTEGER,
     }, {
         timestamps: false,
     });

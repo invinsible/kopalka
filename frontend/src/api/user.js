@@ -107,4 +107,17 @@ export default {
             },
         });
     },
+
+    moveInMaze(accessToken, direction){
+        return HTTP({
+            url: '/maze/move',
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+            data: {
+                direction,
+            },
+        });
+    },
 };

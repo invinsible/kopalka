@@ -28,11 +28,11 @@ router.get('/instance/:id', async function (ctx) {
     const instance = await mazeService.getInstance(ctx.params.id);
 
     // Определяем положение пользователя
-    const currentPosition = mazeService.getCurrentPosition(instance.dataParsed);
+    const instanceUser = await mazeService.getUsersCurrentInstance(ctx.state.user.data.id);
 
     ctx.body = {
         maze: instance.dataParsed,
-        currentPosition,
+        currentPosition: {x: instanceUser.x, y: instanceUser.y},
         fogEnabled: true
     };
 });
@@ -50,6 +50,22 @@ router.get('/current', async function (ctx) {
     };
 });
 
+// Движение
+router.post('/move', async function (ctx) {
+    const mazeService = new MazeService();
+    const {body} = ctx.request;
+    if (!body || !body.direction) {
+        ctx.throw(400, 'Direction is needed');
+    }
+
+    const result = await mazeService.move(ctx.state.user.data.id, body.direction);
+
+    ctx.body = {
+        result: 'success',
+        x: result.x,
+        y: result.y
+    }
+});
 
 // Тестовое создание лабиринта
 // @deprecated
