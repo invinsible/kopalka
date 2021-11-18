@@ -14,26 +14,7 @@ export default new Vuex.Store({
     accessToken: localStorage.getItem('accessToken') || null,
     inventory: null,
     table: null,
-    notifications: [
-      {
-        id: 0,
-        force: false,
-        title: 'Success text',
-        type: 'success',
-      },
-      {
-        id: 1,
-        force: true,
-        title: 'Danger text',
-        type: 'danger',
-      },
-      {
-        id: 2,
-        force: false,
-        title: 'Regular every day',
-        type: 'regular',
-      },
-    ],
+    notifications: [],
   },
   mutations: {
     setRefreshToken(state, value) {
@@ -69,13 +50,17 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    async login({dispatch}, data) {
+    async login({commit, dispatch}, data) {
       try {
         await dispatch('getRefreshToken', data);
         await dispatch('getAccessToken');
         return true;
       } catch (e) {
-        console.log(e);
+        commit('addNotification', {
+          force: true,
+          title: 'Login Error. ' + e.toString(),
+          type: 'danger',
+        });
         return false;
       }
     },
@@ -167,7 +152,7 @@ export default new Vuex.Store({
       }
     },
 
-    closeNotification({commit}, id) {
+    async closeNotification({commit}, id) {
       commit('removeNotification', id);
     },
   },
