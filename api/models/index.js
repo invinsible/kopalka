@@ -14,6 +14,8 @@ const models = {
     Item: require('./item')(sequelize, DataTypes),
     InventoryItem: require('./inventory_item')(sequelize, DataTypes),
     WorkCycle: require('./work_cycles')(sequelize, DataTypes),
+    MazeInstance: require('./maze_instance')(sequelize, DataTypes),
+    MazeInstanceUser: require('./maze_instance_user')(sequelize, DataTypes),
 };
 
 // Creating associations

@@ -2,7 +2,8 @@ module.exports = {
     user: {
         states: {
             INACTIVE: 0,
-            WORKING: 1
+            WORKING: 1,
+            IN_MAZE: 2
         }
     },
     workCycle: {

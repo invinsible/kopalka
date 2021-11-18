@@ -75,18 +75,20 @@ export default {
   },
 
   async created() {
-    await this.loadMaze();
+    await this.loadMaze(this.$route.params.id);
     window.removeEventListener('keydown', this.onKeyboardEvent);
     window.addEventListener('keydown', this.onKeyboardEvent);
   },
+
   beforeDestroy() {
     window.removeEventListener('keydown', this.onKeyboardEvent);
   },
 
   methods: {
-    async loadMaze() {
-      const response = await User.getRandomMaze(
+    async loadMaze(id) {
+      const response = await User.getMaze(
           localStorage.getItem('accessToken'),
+          id,
       );
 
       const grid = [];
@@ -165,29 +167,29 @@ export default {
     },
 
     onKeyboardEvent(event) {
-      event.preventDefault();
-
-      switch (event.code) {
-        case 'KeyW':
+      const actions = {
+        KeyW: () => {
           this.move('N');
-          break;
-        case 'KeyS':
+        },
+        KeyS: () => {
           this.move('S');
-          break;
-        case 'KeyA':
+        },
+        KeyA: () => {
           this.move('W');
-          break;
-        case 'KeyD':
+        },
+        KeyD: () => {
           this.move('E');
-          break;
-      }
+        },
+      };
 
-      return false;
+      if (actions[event.code] !== undefined) {
+        event.preventDefault();
+        actions[event.code]();
+      }
     },
 
     move(direction) {
       if (this.currentPositionCell.walls & DIRECTIONS[direction]) {
-        console.log('There is wall in the way');
         return false;
       }
 

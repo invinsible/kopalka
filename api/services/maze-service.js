@@ -1,5 +1,7 @@
 const {v4} = require("uuid");
 const _ = require('lodash');
+const {models, sequelize} = require('../models');
+const enums = require('../lib/enums')
 
 const DIRECTIONS = {N: 1, S: 2, E: 4, W: 8};
 const DX = {N: 0, S: 0, E: 1, W: -1};
@@ -8,12 +10,21 @@ const OPPOSITE = {N: DIRECTIONS.S, S: DIRECTIONS.N, E: DIRECTIONS.W, W: DIRECTIO
 
 // Сервис для лабиринтов
 class MazeService {
-    constructor() {
+    /**
+     * @type {UserService}
+     */
+    userService = null
+
+    /**
+     *
+     * @param userService
+     */
+    constructor(userService) {
+        this.userService = userService;
     }
 
     generate() {
         const maze = {
-            id: v4(),
             width: 30,
             height: 20,
             cells: [],
@@ -102,6 +113,83 @@ class MazeService {
         const randomEntry = _.shuffle(entries)[0];
 
         return randomEntry.coords
+    }
+
+    /**
+     * Создаёт инстанс лабиринта и отправляет туда пользователя.
+     * @param userId
+     * @return {Promise<string>}
+     */
+    async start(userId) {
+        const user = await this.userService.findInactive(userId);
+        const maze = this.generate();
+
+        const result = await sequelize.transaction(async (t) => {
+            const updated = await models.User.update(
+                {state: enums.user.states.IN_MAZE},
+                {where: {id: user.id}},
+                {transaction: t}
+            );
+
+            const instance = await models.MazeInstance.create({
+                id: v4(),
+                type: 1,
+                created_by: user.id,
+                data: JSON.stringify(maze)
+            }, {transaction: t});
+
+            const instanceUser = await models.MazeInstanceUser.create({
+                maze_instance_id: instance.id,
+                user_id: user.id,
+                is_active: 1
+            }, {transaction: t});
+
+
+            return instanceUser.maze_instance_id;
+        });
+
+        console.log(`Created maze instance ${result}.`)
+
+        return result;
+    }
+
+    /**
+     * Находит инстанс лабиринта по айди и возвращает данные для фронта.
+     * @param id
+     * @return {Promise<*|null>}
+     */
+    async getInstance(id) {
+        // @todo проверять, что пользователь есть в этом инсте
+        const maze = await models.MazeInstance.findByPk(id);
+        if (!maze) {
+            return null;
+        }
+
+        maze.dataParsed = JSON.parse(maze.data);
+
+        return maze;
+    }
+
+    /**
+     * Находит активный инстанс пользователя.
+     * @param userId
+     * @return {Promise<void>}
+     */
+    async getUsersInstance(userId) {
+        const user = await models.User.findByPk(userId);
+        if (user === null) {
+            throw new Error('User not found')
+        }
+
+        const activeInstanceUser = await models.MazeInstanceUser.findOne({
+            where: {user_id: user.id, is_active: 1}
+        });
+
+        if (!activeInstanceUser) {
+            return null;
+        }
+
+        return activeInstanceUser;
     }
 }
 

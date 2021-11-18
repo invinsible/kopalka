@@ -1,12 +1,58 @@
 const Router = require('koa-router')
 const MazeService = require('../services/maze-service')
+const UserService = require("../services/user-service");
 
 const router = new Router({prefix: '/maze'});
 router.use(require('../middleware/auth-required'))
 
+const userService = new UserService();
+
+// Создаёт новый инстанс лабиринта
+router.post('/start', async function (ctx) {
+    const mazeService = new MazeService(userService);
+
+    try {
+        const id = await mazeService.start(ctx.state.user.data.id);
+        ctx.body = {
+            id
+        };
+    } catch (err) {
+        ctx.throw(400, err.message)
+    }
+});
+
+// Возвращает созданный инстанс лабиринта
+router.get('/instance/:id', async function (ctx) {
+    const mazeService = new MazeService(userService);
+
+    const instance = await mazeService.getInstance(ctx.params.id);
+
+    // Определяем положение пользователя
+    const currentPosition = mazeService.getCurrentPosition(instance.dataParsed);
+
+    ctx.body = {
+        maze: instance.dataParsed,
+        currentPosition,
+        fogEnabled: true
+    };
+});
+
+// Возвращает
+router.get('/current', async function (ctx) {
+    const mazeService = new MazeService(userService);
+
+    const current = await mazeService.getUsersInstance(ctx.state.user.data.id);
+
+    console.log(current);
+
+    ctx.body = {
+        id: !current ? null : current.maze_instance_id
+    };
+});
 
 
 // Тестовое создание лабиринта
+// @deprecated
 router.get('/generate', async function (ctx) {
     const mazeService = new MazeService();
 

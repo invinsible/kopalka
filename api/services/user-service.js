@@ -2,6 +2,11 @@ const {models} = require("../models");
 const enums = require('../lib/enums')
 
 class UserService {
+    /**
+     * Находит пользователя по айди и возвращает его, если он существует и неактивен.
+     * @param userId
+     * @return {Promise<*>}
+     */
     async findInactive(userId) {
         const user = await models.User.findByPk(userId);
         if (user === null) {

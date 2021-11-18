@@ -68,9 +68,39 @@ export default {
         });
     },
 
+    startMaze(accessToken){
+        return HTTP({
+            url: '/maze/start',
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+    },
+
+    getMaze(accessToken, mazeId) {
+        return HTTP({
+            url: '/maze/instance/' + mazeId,
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+    },
+
+    getCurrentMaze(accessToken) {
+        return HTTP({
+            url: '/maze/current',
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+    },
+
     getRandomMaze(accessToken){
         return HTTP({
-            url: 'http://localhost:3000/maze/generate',
+            url: '/maze/generate',
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${accessToken}`,
