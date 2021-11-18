@@ -79,8 +79,8 @@ class MazeService {
 
     getRandomCell(maze) {
         return {
-            x: _.random(0, maze.width),
-            y: _.random(0, maze.height),
+            x: _.random(0, maze.width - 1),
+            y: _.random(0, maze.height - 1),
         }
     }
 
@@ -89,6 +89,19 @@ class MazeService {
             coords,
             type
         };
+    }
+
+    getCurrentPosition(maze) {
+        const entries = [];
+        for (const object of maze.objects) {
+            if (object.type === 'entry') {
+                entries.push(object)
+            }
+        }
+
+        const randomEntry = _.shuffle(entries)[0];
+
+        return randomEntry.coords
     }
 }
 

@@ -12,9 +12,13 @@ router.get('/generate', async function (ctx) {
 
     let maze = mazeService.generate();
 
+    // Определяем положение пользователя
+    const currentPosition = mazeService.getCurrentPosition(maze);
+
     ctx.body = {
         maze,
-        fogEnabled: false
+        currentPosition,
+        fogEnabled: true
     };
 });
 
