@@ -1,15 +1,8 @@
 <template>
   <div v-if="!isLoad">
-   
-    <div v-if="workStatus">
-      <p>Вы собираете травы. {{ timerText }}</p>    
-    </div>
-
-    <b-button-group>
-      <b-button v-if="!workStatus" @click.prevent="startWork" variant="info"
-        >Собирать травы</b-button
-      >      
-    </b-button-group>
+    <p v-if="workStatus">Вы собираете травы. {{ timerText }}</p>
+    <p v-if="workResult && !workStatus">{{ resultText }}</p>    
+    <b-button v-if="!workStatus" @click.prevent="startWork" variant="info">Собирать травы</b-button>    
   </div>
   <b-spinner v-else variant="primary" type="grow" label="Spinning"></b-spinner>
 </template>
@@ -22,11 +15,11 @@ export default {
 
   data() {
     return {
-      isLoad: true,
+      isLoad: true,     
     };
   },
   computed: {
-    ...mapGetters(['workStatus']),
+    ...mapGetters(['workStatus', 'workResult']),
     timerText() {      
       const min = Math.floor((this.timeDiffernce / 1000 / 60) << 0);
       const sec = Math.floor((this.timeDiffernce / 1000) % 60);
@@ -35,6 +28,10 @@ export default {
     timeDiffernce() {
       return this.workStatus?.timeEnd - new Date().getTime();
     },
+    resultText() {
+       return this.workResult.itemName ? `Вы собрали ${this.workResult.itemName} в количестве ${this.workResult.quantity} шт.` : 'Трава оказалась пожухлой';
+       
+     },    
   },
   async created() {
     await this.getStatus();
