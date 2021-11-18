@@ -3,7 +3,7 @@
     <h1>Лабиринт</h1>
     <b-row>
       <b-col>
-        <maze-block :maze="maze" v-if="loaded" />
+        <maze-block :grid="grid" v-if="loaded" />
       </b-col>
     </b-row>
     <b-row style="margin-top: 30px;">
@@ -26,6 +26,7 @@ export default {
   data() {
     return {
       maze: {},
+      grid: [],
       loaded: false,
     };
   },
@@ -38,9 +39,43 @@ export default {
           localStorage.getItem('accessToken'),
       );
 
-      console.log(response.data);
+      const grid = [];
+      const objects = this.prepareObjects(response.data.maze.objects);
+
+      for (let y = 0; y < response.data.maze.cells.length; y++) {
+        grid[y] = [];
+
+        for (let x = 0; x < response.data.maze.cells[y].length; x++) {
+          grid[y][x] = {
+            coords: [x, y],
+            walls: response.data.maze.cells[y][x],
+            fog: response.data.fogEnabled,
+            objects: objects[y] && objects[y][x] ? objects[y][x] : [],
+          };
+        }
+      }
+
       this.maze = response.data;
+      this.grid = grid;
       this.loaded = true;
+    },
+
+    prepareObjects(objects) {
+        const result = [];
+        
+        for (const object of objects) {
+          if (!result[object.coords.y]) {
+            result[object.coords.y] = [];
+          }
+          
+          if (!result[object.coords.y][object.coords.x]) {
+            result[object.coords.y][object.coords.x] = [];
+          }
+          
+          result[object.coords.y][object.coords.x].push(object);
+        }
+        
+        return result;
     },
   },
 };

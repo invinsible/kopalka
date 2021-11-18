@@ -1,12 +1,16 @@
 <template>
   <div class="mazeContainer">
-    <div class="mazeRow" v-for="(row, y) in maze.cells" :key="'row' + y">
+    <div class="mazeRow" v-for="(row, y) in grid" :key="'row' + y">
       <div class="mazeCell" v-for="(cell, x) in row" :key="'cell' + x + tick"
-           :class="cellClass(cell, x, y)"
-           @click="visitCell(x, y)"
+           :class="cellClass(cell)"
+           @click="visitCell(cell)"
       >
-        <!--        {{ x }}x{{ y }}<br />-->
-        <!--        {{ cell | asBitmap }}-->
+        <div v-if="!cell.fog">
+          <b-icon-house-door v-if="cellHasObject(cell, 'entry')"></b-icon-house-door>
+          <b-icon-box-arrow-in-down v-if="cellHasObject(cell, 'stairs-down')"></b-icon-box-arrow-in-down>
+        </div>
+<!--                {{ cell.coords[0] }}x{{ cell.coords[1] }}<br />-->
+<!--                {{ cell.walls | asBitmap }}-->
       </div>
     </div>
   </div>
@@ -26,8 +30,8 @@ export default {
     },
   },
   props: {
-    maze: {
-      type: Object,
+    grid: {
+      type: Array,
       default: null,
     },
   },
@@ -45,25 +49,29 @@ export default {
       // console.log(this.maze.cells);
     },
 
-    cellClass(cell, x, y) {
-      const visited = this.visited[y] && this.visited[y][x];
+    cellClass(cell) {
+      const show = !cell.fog;
       return {
-        n: visited && (cell & N),
-        s: visited && (cell & S),
-        e: visited && (cell & E),
-        w: visited && (cell & W),
-        visited,
+        n: show && (cell.walls & N),
+        s: show && (cell.walls & S),
+        e: show && (cell.walls & E),
+        w: show && (cell.walls & W),
+        show,
       };
     },
 
-    visitCell(x, y) {
-      if (!this.visited[y]) {
-        this.visited[y] = [];
+    visitCell(cell) {
+      cell.fog = false;
+    },
+
+    cellHasObject(cell, objectType) {
+      for (let i = 0; i < cell.objects.length; i++) {
+        if (cell.objects[i].type === objectType) {
+          return true;
+        }
       }
 
-      this.visited[y][x] = true;
-      console.log(this.visited);
-      this.tick += 1;
+      return false;
     },
   },
 };
@@ -71,8 +79,6 @@ export default {
 
 <style scoped>
 .mazeContainer {
-  font-size: 10px;
-  color: #ccc;
   background-color: #bbb;
   display: inline-block;
 }
@@ -89,7 +95,7 @@ export default {
   text-align: center;
 }
 
-.mazeCell.visited {
+.mazeCell.show {
   background-color: #fff;
   border-color: #333;
 }

@@ -11,9 +11,11 @@ router.get('/generate', async function (ctx) {
     const mazeService = new MazeService();
 
     let maze = mazeService.generate();
-    console.log(maze);
 
-    ctx.body = maze;
+    ctx.body = {
+        maze,
+        fogEnabled: false
+    };
 });
 
 module.exports = router.routes();

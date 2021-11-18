@@ -17,10 +17,11 @@ class MazeService {
             width: 30,
             height: 20,
             cells: [],
-            // connections: []
+            objects: [],
         };
 
         maze.cells = this.generateMaze(maze.width, maze.height);
+        maze.objects = this.generateObjects(maze);
 
         return maze;
     }
@@ -34,7 +35,6 @@ class MazeService {
                 grid[y][x] = 0b1111;
             }
         }
-
 
         return this.carvePassagesFrom(0, 0, grid);
     }
@@ -65,6 +65,31 @@ class MazeService {
         return grid;
     }
 
+    generateObjects(maze) {
+        let objects = [];
+
+        // Entries
+        objects.push(this.buildNewObject(this.getRandomCell(maze), 'entry'))
+
+        // Exits
+        objects.push(this.buildNewObject(this.getRandomCell(maze), 'stairs-down'))
+
+        return objects;
+    }
+
+    getRandomCell(maze) {
+        return {
+            x: _.random(0, maze.width),
+            y: _.random(0, maze.height),
+        }
+    }
+
+    buildNewObject(coords, type) {
+        return {
+            coords,
+            type
+        };
+    }
 }
 
 module.exports = MazeService;
