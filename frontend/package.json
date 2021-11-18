@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve --mode development",
     "build:test": "vue-cli-service build --mode test",
     "build:master": "vue-cli-service build --mode master",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "lint-fix": "vue-cli-service lint --fix"
   },
   "dependencies": {
     "axios-auth-refresh": "^3.2.1",
