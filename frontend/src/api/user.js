@@ -6,8 +6,8 @@ export default {
             url: 'https://kopalka.paaashka.ru/api/auth/refresh',
             method: 'POST',
             data: {
-                refreshToken, 
-            },           
+                refreshToken,
+            },
         });
     },
     getRefreshToken(data) {
@@ -17,7 +17,7 @@ export default {
             data: {
                 username: data.username,
                 password: data.password,
-            },           
+            },
         });
     },
     checkToken(accessToken) {
@@ -62,6 +62,16 @@ export default {
         return HTTP({
             url: 'https://kopalka.paaashka.ru/api/work/start',
             method: 'POST',
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+    },
+
+    getRandomMaze(accessToken){
+        return HTTP({
+            url: 'http://localhost:3000/maze/generate',
+            method: 'GET',
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
