@@ -58,7 +58,7 @@ router.get('/status', async function (ctx) {
         currentCycle = null;
     }
 
-    const previousCycle = await workService.getPrevious(ctx.state.user.data.id + '1'),
+    const previousCycle = await workService.getPrevious(ctx.state.user.data.id),
         previous = previousCycle === null ? null : {
             timeEnd: dayjs(previousCycle.time_end).valueOf(),
             itemName: previousCycle.item ? previousCycle.item.name : null,
