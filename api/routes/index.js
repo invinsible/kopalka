@@ -7,5 +7,6 @@ api.use(require('./healtchcheck-router'));
 api.use(require('./inventory-router'));
 api.use(require('./notifications-router'));
 api.use(require('./work-router'));
+api.use(require('./maze-router'));
 
 module.exports = api;

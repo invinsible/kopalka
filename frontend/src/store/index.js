@@ -131,7 +131,7 @@ export default new Vuex.Store({
     },
 
     async getStatus({commit}, token) {
-      const response = await User.getStatus(token);
+      const response = await User.getStatus(token);      
       commit('setStatus', response.data.cycle);
       return response;
     },

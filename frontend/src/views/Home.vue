@@ -6,9 +6,10 @@
         <mineral-table :items="table" />
       </b-col>
       <b-col>
-        <buttons-block />
-      </b-col>
-    </b-row>
+        <buttons-block /> <br />
+        <b-button :to="{ name: 'MazeIntro' }">Лабиринт</b-button>
+      </b-col> 
+    </b-row>       
     <p v-else>Идёт загрузка</p>
     <notifications />
   </b-container>

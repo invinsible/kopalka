@@ -1,12 +1,17 @@
 const Router = require('koa-router');
 const {models} = require("../models");
 const WorkService = require('../services/work-service')
+const InventoryService = require('../services/inventory-service')
+const UserService = require('../services/user-service')
 const dayjs = require("dayjs");
 
 const router = new Router({prefix: '/work'});
 router.use(require('../middleware/auth-required'))
 
-const workService = new WorkService();
+const workService = new WorkService(
+    new InventoryService(),
+    new UserService()
+);
 
 
 // Список вариантов добычи и кол-ва предметов у пользователя
