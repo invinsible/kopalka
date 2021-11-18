@@ -14,6 +14,13 @@ module.exports = function (sequelize, DataTypes) {
         },
         x: DataTypes.INTEGER,
         y: DataTypes.INTEGER,
+        visited: DataTypes.TEXT,
+        visitedParsed: {
+            type: DataTypes.VIRTUAL,
+            get() {
+                return JSON.parse(this.visited);
+            }
+        }
     }, {
         timestamps: false,
     });

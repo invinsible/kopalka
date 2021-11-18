@@ -93,15 +93,18 @@ export default {
 
       const grid = [];
       const objects = this.prepareObjects(response.data.maze.objects);
+      const visited = this.prepareVisited(response.data.visited);
 
       for (let y = 0; y < response.data.maze.cells.length; y++) {
         grid[y] = [];
 
         for (let x = 0; x < response.data.maze.cells[y].length; x++) {
+          const cellVisited = visited[y] && visited[y][x];
+
           grid[y][x] = {
             coords: {x, y},
             walls: response.data.maze.cells[y][x],
-            fog: response.data.fogEnabled,
+            fog: !cellVisited && response.data.fogEnabled,
             objects: objects[y] && objects[y][x] ? objects[y][x] : [],
           };
         }
@@ -130,6 +133,24 @@ export default {
         }
 
         result[object.coords.y][object.coords.x].push(object);
+      }
+
+      return result;
+    },
+
+    prepareVisited(visited) {
+      const result = [];
+
+      for (const cell of visited) {
+        if (!result[cell[1]]) {
+          result[cell[1]] = [];
+        }
+
+        if (!result[cell[1]][cell[0]]) {
+          result[cell[1]][cell[0]] = [];
+        }
+
+        result[cell[1]][cell[0]].push(true);
       }
 
       return result;

@@ -221,11 +221,15 @@ class MazeService {
             throw new Error('Wrong move');
         }
 
+        const visited = current.visitedParsed;
+        visited.push([newPosition.x, newPosition.y]);
+
         // @todo проверить, нет ли стен
 
         await models.MazeInstanceUser.update({
             x: newPosition.x,
-            y: newPosition.y
+            y: newPosition.y,
+            visited: JSON.stringify(visited)
         }, {where: {maze_instance_id: current.maze_instance_id, user_id: current.user_id}});
 
         return {

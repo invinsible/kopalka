@@ -33,6 +33,7 @@ router.get('/instance/:id', async function (ctx) {
     ctx.body = {
         maze: instance.dataParsed,
         currentPosition: {x: instanceUser.x, y: instanceUser.y},
+        visited: instanceUser.visitedParsed,
         fogEnabled: true
     };
 });
