@@ -1,8 +1,8 @@
 <template>
   <div class="n-wrapper d-flex">
     <notification
-        v-for="(item, index) in notifications"
-        :key="`notification-`+index"
+        v-for="(item) in notifications"
+        :key="`notification-`+item.id"
         :item="item"
         @close="close"
     />
@@ -18,24 +18,15 @@ export default {
   components: {
     Notification,
   },
-  props: {},
 
   computed: {
     ...mapGetters(['notifications']),
   },
 
-  watch: {},
-
-  created() {
-  },
-
-  mounted() {
-  },
-
   methods: {
     ...mapActions(['closeNotification']),
-    close(id) {
-      this.closeNotification(id);
+    async close(id) {
+      await this.closeNotification(id);
     },
   },
 };

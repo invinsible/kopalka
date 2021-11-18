@@ -15,7 +15,7 @@ export default {
     item: {
       type: Object,
       default() {
-        return { };
+        return {};
       },
     },
   },
@@ -31,14 +31,12 @@ export default {
   },
 
   mounted() {
-    // if (!this.item.force) {
-    //   setTimeout(this.close, 5000);
-    // }
+    !this.item.force && setTimeout(this.close, 5000);
   },
 
   methods: {
     close() {
-      this.$emit('close', Number(this.item.id));
+      this.$emit('close', this.item.id);
     },
   },
 };
