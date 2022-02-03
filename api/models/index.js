@@ -13,7 +13,10 @@ const models = {
     Token: require('./token')(sequelize, DataTypes),
     Item: require('./item')(sequelize, DataTypes),
     InventoryItem: require('./inventory_item')(sequelize, DataTypes),
+    Notification: require('./notification')(sequelize, DataTypes),
     WorkCycle: require('./work_cycles')(sequelize, DataTypes),
+    MazeInstance: require('./maze_instance')(sequelize, DataTypes),
+    MazeInstanceUser: require('./maze_instance_user')(sequelize, DataTypes),
 };
 
 // Creating associations
@@ -21,6 +24,9 @@ models.Item.hasMany(models.InventoryItem, {foreignKey: 'item_id'})
 models.InventoryItem.belongsTo(models.Item, {foreignKey: 'item_id'})
 models.WorkCycle.belongsTo(models.User, {foreignKey: 'user_id'})
 models.WorkCycle.belongsTo(models.Item, {foreignKey: 'item_id'})
+
+models.MazeInstance.hasMany(models.MazeInstanceUser, {foreignKey: 'maze_instance_id'});
+models.MazeInstanceUser.belongsTo(models.MazeInstance, {foreignKey: 'maze_instance_id'});
 
 module.exports = {
     sequelize,

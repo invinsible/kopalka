@@ -2,14 +2,25 @@ const dayjs = require("dayjs");
 const {v4} = require("uuid");
 const {models} = require("../models");
 const enums = require('../lib/enums')
-const InventoryService = require("./inventory-service");
 
 /**
  * Класс для работы с добычей
  */
 class WorkService {
-    constructor() {
-        this.inventoryService = new InventoryService();
+
+    /**
+     * @type {InventoryService}
+     */
+    inventoryService = null
+
+    /**
+     * @type {UserService}
+     */
+    userService = null
+
+    constructor(inventoryService, userService) {
+        this.inventoryService = inventoryService;
+        this.userService = userService;
     }
 
     /**
@@ -26,16 +37,7 @@ class WorkService {
      * @return {Promise<*>}
      */
     async start(userId) {
-        const user = await models.User.findByPk(userId);
-        if (user === null) {
-            throw new Error('User not found')
-        }
-
-        const currentCycle = await this.getCurrent(userId);
-
-        if (currentCycle !== null || user.state !== enums.user.states.INACTIVE) {
-            throw new Error('User is not inactive')
-        }
+        const user = await this.userService.findInactive(userId);
 
         const newCycle = await models.WorkCycle.create({
             id: v4(),
