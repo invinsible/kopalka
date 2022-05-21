@@ -9,5 +9,6 @@ api.use(require('./notifications-router'));
 api.use(require('./work-router'));
 api.use(require('./maze-router'));
 api.use(require('./temp-router'));
+api.use(require('./user-router'));
 
 module.exports = api;
