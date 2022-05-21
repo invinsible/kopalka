@@ -2,7 +2,7 @@
   <b-container class="login-page">
     <b-row alignV="center" alignH="center" class="minHeight100">
       <b-col cols="8" md="4" lg="4" sm="8">
-        <login-form />
+        <Login-form />
       </b-col>
     </b-row>
   </b-container>

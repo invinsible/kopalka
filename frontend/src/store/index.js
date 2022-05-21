@@ -12,7 +12,7 @@ export default new Vuex.Store({
     workResult: '',
     refreshToken: localStorage.getItem('refreshToken') || null,
     accessToken: localStorage.getItem('accessToken') || null,
-    inventory: null,
+    // inventory: null,
     table: null,
     notifications: [],
   },
@@ -29,9 +29,9 @@ export default new Vuex.Store({
     setTable(state, value) {
       state.table = value;
     },
-    setInventory(state, value) {
-      state.inventory = value;
-    },
+    // setInventory(state, value) {
+    //   state.inventory = value;
+    // },
     setStatus(state, value) {
       state.workStatus = value;
     },
@@ -98,25 +98,25 @@ export default new Vuex.Store({
       }
     },
 
-    async getInventory({commit}, token) {
-      try {
-        const response = await User.getInventory(token);
-        if (response) {
-          commit('setInventory', response.data);
-          return;
-        }
-      } catch (error) {
-        commit('addNotification', {
-          force: true,
-          title: 'Get Inventory Error. ' + error.toString(),
-          type: 'danger',
-        });
-      }
-    },
+    // async getInventory({commit}) {
+    //   try {
+    //     const response = await User.getInventory();
+    //     if (response) {
+    //       commit('setInventory', response.data);
+    //       return;
+    //     }
+    //   } catch (error) {
+    //     commit('addNotification', {
+    //       force: true,
+    //       title: 'Get Inventory Error. ' + error.toString(),
+    //       type: 'danger',
+    //     });
+    //   }
+    // },
 
-    async getTable({commit}, token) {
+    async getTable({commit}) {
       try {
-        const response = await User.getTable(token);
+        const response = await User.getTable();
         if (response) {
           commit('setTable', response.data);
           return;
@@ -130,15 +130,15 @@ export default new Vuex.Store({
       }
     },
 
-    async getStatus({commit}, token) {
-      const response = await User.getStatus(token);      
+    async getStatus({commit}) {
+      const response = await User.getStatus();      
       commit('setStatus', response.data.cycle);
       return response;
     },
 
-    async getNotifications({commit}, token) {
+    async getNotifications({commit}) {
       try {
-        const response = await Notifications.getNotifications(token);
+        const response = await Notifications.getNotifications();
         if (response) {
           commit('setNotifications', response.data);
           return;
@@ -160,7 +160,7 @@ export default new Vuex.Store({
     refreshToken: state => state.refreshToken,
     isRefreshToken: state => !!state.refreshToken,
     isAccessToken: state => !!state.accessToken,
-    inventory: state => state.inventory,
+    // inventory: state => state.inventory,
     table: state => {
       function byField(field) {
         return (a, b) => a[field] > b[field] ? -1 : 1;

@@ -1,19 +1,24 @@
 <template>
   <b-container fluid="">
     <h1>Лабиринт</h1>
-    <b-row style="margin-top: 30px;">
+    <b-row style="margin-top: 30px">
       <b-col>
         <div class="mazeContainer">
-
           <div class="mazeRow" v-for="(row, y) in grid" :key="'row' + y">
-            <div class="mazeCell" v-for="(cell, x) in row" :key="'cell' + x"
-                 :class="cellClass(cell)"
+            <div
+              class="mazeCell"
+              v-for="(cell, x) in row"
+              :key="'cell' + x"
+              :class="cellClass(cell)"
             >
               <div v-if="!cell.fog">
                 <span class="cellIcon" v-if="cellHasObject(cell, 'entry')">
                   <b-icon-house-door></b-icon-house-door>
                 </span>
-                <span class="cellIcon" v-if="cellHasObject(cell, 'stairs-down')">
+                <span
+                  class="cellIcon"
+                  v-if="cellHasObject(cell, 'stairs-down')"
+                >
                   <b-icon-box-arrow-in-down></b-icon-box-arrow-in-down>
                 </span>
               </div>
@@ -25,7 +30,6 @@
               <!--                {{ cell.walls | asBitmap }}-->
             </div>
           </div>
-
         </div>
       </b-col>
 
@@ -50,18 +54,22 @@
                 <b-icon-arrow-right></b-icon-arrow-right>
               </b-button>
             </div>
-            <div style="min-height: 38px;">
-              <b-button variant="danger" @click="exit()" v-if="currentCellHasEntry">Выйти</b-button>
+            <div style="min-height: 38px">
+              <b-button
+                variant="danger"
+                @click="exit()"
+                v-if="currentCellHasEntry"
+                >Выйти</b-button
+              >
             </div>
           </b-col>
         </b-row>
         <b-row>
           <b-col><h5>Сумка</h5></b-col>
         </b-row>
-
       </b-col>
     </b-row>
-    <b-row style="margin-top: 30px;">
+    <b-row style="margin-top: 30px">
       <b-col>
         <b-button @click="loadMaze()">Regenerate</b-button>
       </b-col>
@@ -95,7 +103,10 @@ export default {
 
   computed: {
     currentCell() {
-      if (!this.grid[this.currentPosition.y] || !this.grid[this.currentPosition.y][this.currentPosition.x]) {
+      if (
+        !this.grid[this.currentPosition.y] ||
+        !this.grid[this.currentPosition.y][this.currentPosition.x]
+      ) {
         return null;
       }
 
@@ -106,9 +117,11 @@ export default {
         return false;
       }
 
-      return this.currentCell.objects.filter(item => {
-        return item.type === 'entry';
-      }).length === 1;
+      return (
+        this.currentCell.objects.filter(item => {
+          return item.type === 'entry';
+        }).length === 1
+      );
     },
   },
 
@@ -125,8 +138,8 @@ export default {
   methods: {
     async loadMaze(id) {
       const response = await User.getMaze(
-          localStorage.getItem('accessToken'),
-          id,
+        localStorage.getItem('accessToken'),
+        id,
       );
 
       const grid = [];
@@ -197,10 +210,10 @@ export default {
     cellClass(cell) {
       const show = !cell.fog;
       return {
-        n: show && (cell.walls & DIRECTIONS.N),
-        s: show && (cell.walls & DIRECTIONS.S),
-        e: show && (cell.walls & DIRECTIONS.E),
-        w: show && (cell.walls & DIRECTIONS.W),
+        n: show && cell.walls & DIRECTIONS.N,
+        s: show && cell.walls & DIRECTIONS.S,
+        e: show && cell.walls & DIRECTIONS.E,
+        w: show && cell.walls & DIRECTIONS.W,
         show,
         currentPosition: this.cellHasPlayer(cell),
       };
@@ -222,7 +235,10 @@ export default {
     },
 
     cellHasPlayer(cell) {
-      return cell.coords.x === this.currentPosition.x && cell.coords.y === this.currentPosition.y;
+      return (
+        cell.coords.x === this.currentPosition.x &&
+        cell.coords.y === this.currentPosition.y
+      );
     },
 
     onKeyboardEvent(event) {
@@ -253,8 +269,8 @@ export default {
       }
 
       const response = await User.moveInMaze(
-          localStorage.getItem('accessToken'),
-          direction,
+        localStorage.getItem('accessToken'),
+        direction,
       );
 
       console.log(response.data);
@@ -283,9 +299,7 @@ export default {
      * @return {Promise<void>}
      */
     async exit() {
-      const response = await User.exit(
-          localStorage.getItem('accessToken'),
-      );
+      const response = await User.exit(localStorage.getItem('accessToken'));
 
       if (response.data.result === 'success') {
         await this.$router.push({name: 'MazeIntro'});
@@ -324,21 +338,17 @@ export default {
 
 .mazeCell.s {
   border-bottom-style: solid;
-
 }
 
 .mazeCell.e {
   border-right-style: solid;
-
 }
 
 .mazeCell.w {
   border-left-style: solid;
-
 }
 
 .mazeCell.currentPosition {
   box-shadow: inset 0px 0px 7px 3px rgb(7 203 42);
 }
-
 </style>

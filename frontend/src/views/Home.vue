@@ -3,10 +3,10 @@
     <h1>Болото</h1>
     <b-row v-if="!isLoad">
       <b-col cols="12" sm="8" lg="5">
-        <mineral-table :items="table" />
+        <Mineral-table :items="table" />
       </b-col>
       <b-col>
-        <buttons-block /> <br />
+        <Buttons-block /> <br />
         <b-button :to="{ name: 'MazeIntro' }">Лабиринт</b-button>
       </b-col> 
     </b-row>       
@@ -34,28 +34,15 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['inventory', 'table']),
+    ...mapGetters(['table']),
   },
-  created() {
-    this.getTable();
-    this.getNotifications(localStorage.getItem('accessToken'));
+  async created() {
+    await this.getTable();
+    this.isLoad = false;
+    this.getNotifications();
   },
   methods: {
-    ...mapActions(['getNotifications']),
-    async getInventory() {
-      await this.$store.dispatch(
-          'getInventory',
-          localStorage.getItem('accessToken'),
-      );
-      this.isLoad = false;
-    },
-    async getTable() {
-      await this.$store.dispatch(
-          'getTable',
-          localStorage.getItem('accessToken'),
-      );
-      this.isLoad = false;
-    },
+    ...mapActions(['getNotifications', 'getTable']),
   },
 };
 </script>

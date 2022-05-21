@@ -1,9 +1,10 @@
 import HTTP from './default';
+const accessToken = localStorage.getItem('accessToken');
 
 export default {
     authorization(refreshToken) {
         return HTTP({
-            url: 'https://kopalka.paaashka.ru/api/auth/refresh',
+            url: '/auth/refresh',
             method: 'POST',
             data: {
                 refreshToken,
@@ -12,7 +13,7 @@ export default {
     },
     getRefreshToken(data) {
         return HTTP({
-            url: 'https://kopalka.paaashka.ru/api/auth/login',
+            url: '/auth/login',
             method: 'POST',
             data: {
                 username: data.username,
@@ -20,37 +21,27 @@ export default {
             },
         });
     },
-    checkToken(accessToken) {
+    checkToken() {
         return HTTP({
-            url: 'https://kopalka.paaashka.ru/api/debug/me',
+            url: '/debug/me',
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
         });
     },
-    getInventory(accessToken) {
+    getInventory() {
         return HTTP({
-            url: 'https://kopalka.paaashka.ru/api/inventory',
+            url: '/inventory',
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
         });
     },
-    getTable(accessToken) {
+    getTable() {
         return HTTP({
-            url: 'https://kopalka.paaashka.ru/api/work/items',
-            method: 'GET',
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-            },
-        });
-    },
-
-    getStatus(accessToken){
-        return HTTP({
-            url: 'https://kopalka.paaashka.ru/api/work/status',
+            url: '/work/items',
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -58,9 +49,19 @@ export default {
         });
     },
 
-    startWork(accessToken){
+    getStatus(){
         return HTTP({
-            url: 'https://kopalka.paaashka.ru/api/work/start',
+            url: '/work/status',
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+    },
+
+    startWork(){
+        return HTTP({
+            url: '/work/start',
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -68,7 +69,7 @@ export default {
         });
     },
 
-    startMaze(accessToken){
+    startMaze(){
         return HTTP({
             url: '/maze/start',
             method: 'POST',
@@ -78,7 +79,7 @@ export default {
         });
     },
 
-    getMaze(accessToken, mazeId) {
+    getMaze(mazeId) {
         return HTTP({
             url: '/maze/instance/' + mazeId,
             method: 'GET',
@@ -88,7 +89,7 @@ export default {
         });
     },
 
-    getCurrentMaze(accessToken) {
+    getCurrentMaze() {
         return HTTP({
             url: '/maze/current',
             method: 'GET',
@@ -98,7 +99,7 @@ export default {
         });
     },
 
-    getRandomMaze(accessToken){
+    getRandomMaze(){
         return HTTP({
             url: '/maze/generate',
             method: 'GET',
@@ -108,7 +109,7 @@ export default {
         });
     },
 
-    moveInMaze(accessToken, direction){
+    moveInMaze(direction){
         return HTTP({
             url: '/maze/move',
             method: 'POST',
@@ -121,7 +122,7 @@ export default {
         });
     },
 
-    exit(accessToken){
+    exit(){
         return HTTP({
             url: '/maze/exit',
             method: 'POST',

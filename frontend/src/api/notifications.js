@@ -1,9 +1,9 @@
 import HTTP from './default';
-
+const accessToken = localStorage.getItem('accessToken');
 export default {
-    getNotifications(accessToken) {
+    getNotifications() {
         return HTTP({
-            url: 'https://kopalka.paaashka.ru/api/notifications',
+            url: '/notifications',
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${accessToken}`,

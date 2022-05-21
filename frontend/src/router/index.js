@@ -44,12 +44,12 @@ const router = new VueRouter({
   routes,
 });
 
-// router.beforeEach((to, from, next) => {
-//   if (to.path !== '/login' && !store.getters.isRefreshToken) {
-//     next('login');
-//   } else {
-//     next();
-//   }
-// });
+router.beforeEach((to, from, next) => {
+  if (to.path !== '/login' && !store.getters.isRefreshToken) {
+    next('login');
+  } else {
+    next();
+  }
+});
 
 export default router;

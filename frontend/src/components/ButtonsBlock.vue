@@ -49,13 +49,13 @@ export default {
       }, 1000);
     },
     async getStatus() {
-      const respone = await this.$store.dispatch('getStatus', localStorage.getItem('accessToken'));
+      const respone = await this.$store.dispatch('getStatus');
       this.isLoad = false;
       return respone.data;
     },
 
     async startWork() {     
-      const response = await User.startWork(localStorage.getItem('accessToken'));      
+      const response = await User.startWork();      
       this.$store.commit('setStatus', response.data.cycle);
       this.stopWork();
     },
@@ -66,7 +66,7 @@ export default {
         clearInterval(this.interval);
         this.getStatus().then(resp => {
           this.$store.commit('setWorkResult', resp.previous);
-          this.$store.dispatch('getTable', localStorage.getItem('accessToken'));          
+          this.$store.dispatch('getTable');          
         });
       }, this.timeDiffernce);
     },
