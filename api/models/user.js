@@ -16,7 +16,11 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.INTEGER,
             default: user.states.INACTIVE
         },
-        work_exp: DataTypes.INTEGER
+        work_exp: DataTypes.INTEGER,
+        is_admin: {
+            type: DataTypes.BOOLEAN,
+            default: 0
+        },
     }, {
         timestamps: false
     });
