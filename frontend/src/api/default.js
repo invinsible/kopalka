@@ -12,7 +12,7 @@ const HTTP = axios.create({
 });
 
 const refreshAuthLogic = async failedRequest => {
-    const response = await store.dispatch('getAccessToken', store.getters.refreshToken);    
+    const response = await store.dispatch('auth/getAccessToken', store.getters.refreshToken);    
     failedRequest.response.config.headers.Authorization = 'Bearer ' + response.data.accessToken;
     return Promise.resolve();
 };
