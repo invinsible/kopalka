@@ -22,7 +22,7 @@ const startApp = () => {
 if (localStorage.getItem('accessToken')) {
   store.dispatch('checkToken', localStorage.getItem('accessToken'))
       .then(() => {
-        startApp();      
+        startApp();
       });
 } else {
   startApp();

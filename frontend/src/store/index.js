@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import User from '@/api/user';
-import Notifications from '@/api/notifications';
 
 Vue.use(Vuex);
 
@@ -14,7 +13,7 @@ export default new Vuex.Store({
     accessToken: localStorage.getItem('accessToken') || null,
     // inventory: null,
     table: null,
-    notifications: [],
+
   },
   mutations: {
     setRefreshToken(state, value) {
@@ -38,16 +37,7 @@ export default new Vuex.Store({
     setWorkResult(state, value) {
       state.workResult = value;
     },
-    addNotification(state, notification) {
-      notification.id = notification.id ? notification.id : Number(new Date());
-      state.notifications.push(notification);
-    },
-    setNotifications(state, notifications) {
-      state.notifications = notifications;
-    },
-    removeNotification(state, id) {
-      state.notifications = state.notifications.filter(item => item.id !== id);
-    },
+    
   },
   actions: {
     async login({commit, dispatch}, data) {
@@ -86,7 +76,8 @@ export default new Vuex.Store({
     async checkToken({commit}, token) {
       try {
         const response = await User.checkToken(token);
-        if (response) {
+        if (response.data) {
+          commit('setUser', response.data);
           return response;
         }
       } catch (error) {
@@ -136,21 +127,7 @@ export default new Vuex.Store({
       return response;
     },
 
-    async getNotifications({commit}) {
-      try {
-        const response = await Notifications.getNotifications();
-        if (response) {
-          commit('setNotifications', response.data);
-          return;
-        }
-      } catch (error) {
-        commit('addNotification', {
-          force: true,
-          title: 'Get Notifications Error. ' + error.toString(),
-          type: 'danger',
-        });
-      }
-    },
+
 
     async closeNotification({commit}, id) {
       commit('removeNotification', id);
@@ -169,6 +146,6 @@ export default new Vuex.Store({
     },
     workStatus: state => state.workStatus,
     workResult: state => state.workResult,
-    notifications: state => state.notifications,
+    isUserAdmin: state => state.user.isAdmin,    
   },
 });

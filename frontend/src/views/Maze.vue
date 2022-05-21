@@ -69,7 +69,7 @@
         </b-row>
       </b-col>
     </b-row>
-    <b-row style="margin-top: 30px">
+    <b-row v-if="isUserAdmin" style="margin-top: 30px">
       <b-col>
         <b-button @click="loadMaze()">Regenerate</b-button>
       </b-col>
@@ -79,6 +79,7 @@
 
 <script>
 import User from '@/api/user';
+import {mapGetters} from 'vuex';
 
 const DIRECTIONS = {N: 1, S: 2, E: 4, W: 8};
 // const DX = {N: 0, S: 0, E: 1, W: -1};
@@ -102,6 +103,7 @@ export default {
   },
 
   computed: {
+    ...mapGetters(['isUserAdmin']),
     currentCell() {
       if (
         !this.grid[this.currentPosition.y] ||

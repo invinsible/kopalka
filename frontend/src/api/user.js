@@ -23,7 +23,7 @@ export default {
     },
     checkToken() {
         return HTTP({
-            url: '/debug/me',
+            url: '/user/me',
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${accessToken}`,
