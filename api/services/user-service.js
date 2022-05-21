@@ -19,6 +19,17 @@ class UserService {
 
         return user;
     }
+
+    /**
+     * Возвращает true, если пользователь - админ.
+     * @param userId
+     * @return {Promise<{default: number, type: *}>}
+     */
+    async userIsAdmin(userId) {
+        const user = await models.User.findByPk(userId)
+
+        return user.is_admin
+    }
 }
 
 module.exports = UserService;

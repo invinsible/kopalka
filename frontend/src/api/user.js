@@ -101,10 +101,24 @@ export default {
 
     getRandomMaze(){
         return HTTP({
-            url: '/maze/generate',
+            url: '/maze/admin/generate',
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${accessToken}`,
+            },
+        });
+    },
+
+    teleportAdmin(x, y){
+        return HTTP({
+            url: '/maze/admin/tp',
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+            data: {
+                x,
+                y,
             },
         });
     },

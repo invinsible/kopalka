@@ -59,7 +59,7 @@ router.post('/move', async function (ctx) {
         ctx.throw(400, 'Direction is needed');
     }
 
-    const result = await mazeService.move(ctx.state.user.data.id, body.direction);
+    const result = await mazeService.move(ctx.state.user.data.id, body.direction, false);
 
     ctx.body = {
         result: 'success',
@@ -81,21 +81,41 @@ router.post('/exit', async function (ctx) {
 });
 
 
-// Тестовое создание лабиринта
-// @deprecated
-router.get('/generate', async function (ctx) {
+// Тестовое создание лабиринта. Только для админов.
+router.get('/admin/generate', require("../middleware/admin-only"), async function (ctx) {
     const mazeService = new MazeService();
 
     let maze = mazeService.generate();
 
     // Определяем положение пользователя
-    const currentPosition = mazeService.getCurrentPosition(maze);
+    const currentPosition = mazeService.getStartingPosition(maze);
 
     ctx.body = {
         maze,
         currentPosition,
-        fogEnabled: true
+        visited: [],
+        fogEnabled: false
     };
+});
+
+// Телепортация по лабу. Только для админов.
+router.post('/admin/tp', require("../middleware/admin-only"), async function (ctx) {
+    const mazeService = new MazeService(userService);
+
+    const {body} = ctx.request;
+
+    console.log(body.x, body.y)
+    if (!body || !body.x || !body.y) {
+        ctx.throw(400, 'Coords are needed');
+    }
+
+    const result = await mazeService.teleport(ctx.state.user.data.id, {x: body.x, y: body.y});
+
+    ctx.body = {
+        result: 'success',
+        x: result.x,
+        y: result.y
+    }
 });
 
 module.exports = router.routes();

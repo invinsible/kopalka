@@ -25,7 +25,7 @@ class MazeService {
 
     generate() {
         const maze = {
-            width: 30,
+            width: 20,
             height: 20,
             cells: [],
             objects: [],
@@ -80,19 +80,58 @@ class MazeService {
         let objects = [];
 
         // Entries
-        objects.push(this.buildNewObject(this.getRandomCell(maze), 'entry'));
+        objects.push(this.buildNewObject(this.getRandomEmptyCell(maze, objects), 'entry'));
 
         // Stairs
-        objects.push(this.buildNewObject(this.getRandomCell(maze), 'stairs-down'));
+        // objects.push(this.buildNewObject(this.getRandomCell(maze), 'stairs-down'));
+
+        // Chests
+        const CHESTS = 10;
+        for (let i = 0; i < CHESTS; i++ ) {
+            objects.push(this.buildNewObject(this.getRandomEmptyCell(maze, objects), 'chest'));
+        }
 
         return objects;
     }
 
+    /**
+     * Возвращает случайю клетку
+     * @param maze
+     * @return {{x: number, y: number}}
+     */
     getRandomCell(maze) {
         return {
             x: _.random(0, maze.width - 1),
             y: _.random(0, maze.height - 1),
         };
+    }
+
+    /**
+     * Возвращает случайную незанятую клетку
+     * @param maze
+     * @param newObjects Массив новых объектов, которые тоже нужно учесть при проверке занятости клетки
+     * @return {null}
+     */
+    getRandomEmptyCell(maze, newObjects) {
+        let randomCell = null,
+            allObjects = _.concat(maze.objects, newObjects);
+
+        do {
+            let cell = this.getRandomCell(maze)
+
+            let empty = true
+            allObjects.forEach((el) => {
+                if (el.coords.x === cell.x && el.coords.y === cell.y) {
+                    empty = false
+                }
+            })
+
+            if (empty === true) {
+                randomCell = cell
+            }
+        } while (randomCell === null)
+
+        return randomCell
     }
 
     buildNewObject(coords, type) {
@@ -200,9 +239,10 @@ class MazeService {
      * Перемещает пользователя в указанном направлении
      * @param userId
      * @param direction
+     * @param ignoreWalls
      * @return {Promise<void>}
      */
-    async move(userId, direction) {
+    async move(userId, direction, ignoreWalls) {
         const user = await models.User.findByPk(userId);
         if (user === null) {
             throw new Error('User not found')
@@ -224,7 +264,37 @@ class MazeService {
         const visited = current.visitedParsed;
         visited.push([newPosition.x, newPosition.y]);
 
-        // @todo проверить, нет ли стен
+        // @todo проверить, нет ли стен с учётом ignoreWalls
+
+        await models.MazeInstanceUser.update({
+            x: newPosition.x,
+            y: newPosition.y,
+            visited: JSON.stringify(visited)
+        }, {where: {maze_instance_id: current.maze_instance_id, user_id: current.user_id}});
+
+        return {
+            x: newPosition.x,
+            y: newPosition.y
+        };
+    }
+
+    /**
+     * Телепорт на указанную клетку лабиринта
+     * Осторожно, не проверяются права и существование клетки
+     * @param userId
+     * @param newPosition
+     * @return {Promise<{x, y}>}
+     */
+    async teleport(userId, newPosition) {
+        const user = await models.User.findByPk(userId);
+        if (user === null) {
+            throw new Error('User not found')
+        }
+
+        const current = await this.getUsersCurrentInstance(user.id);
+
+        const visited = current.visitedParsed;
+        visited.push([newPosition.x, newPosition.y]);
 
         await models.MazeInstanceUser.update({
             x: newPosition.x,

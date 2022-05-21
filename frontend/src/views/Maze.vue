@@ -12,14 +12,20 @@
               :class="cellClass(cell)"
             >
               <div v-if="!cell.fog">
-                <span class="cellIcon" v-if="cellHasObject(cell, 'entry')">
+                <span
+                    class="cellIcon"
+                    v-if="cellHasObject(cell, 'entry')">
                   <b-icon-house-door></b-icon-house-door>
                 </span>
                 <span
-                  class="cellIcon"
-                  v-if="cellHasObject(cell, 'stairs-down')"
-                >
+                    class="cellIcon"
+                    v-if="cellHasObject(cell, 'stairs-down')">
                   <b-icon-box-arrow-in-down></b-icon-box-arrow-in-down>
+                </span>
+                <span
+                    class="cellIcon"
+                    v-if="cellHasObject(cell, 'chest')">
+                  <b-icon-box></b-icon-box>
                 </span>
               </div>
 
@@ -71,7 +77,9 @@
     </b-row>
     <b-row v-if="isUserAdmin" style="margin-top: 30px">
       <b-col>
-        <b-button @click="loadMaze()">Regenerate</b-button>
+        <b-button @click="loadMaze()">Regenerate</b-button>&nbsp;
+        <b-button @click="adminTeleportToExit('entry')">TP to exit</b-button>&nbsp;
+        <b-button @click="adminTeleportToExit('chest')">TP to chest</b-button>
       </b-col>
     </b-row>
   </b-container>
@@ -139,7 +147,9 @@ export default {
 
   methods: {
     async loadMaze(id) {
+
       const response = await User.getMaze(id);
+      // const response = await User.getRandomMaze();
 
       const grid = [];
       const objects = this.prepareObjects(response.data.maze.objects);
@@ -300,6 +310,40 @@ export default {
       if (response.data.result === 'success') {
         await this.$router.push({name: 'MazeIntro'});
       }
+    },
+
+    findCellByObject(type) {
+      let foundCell = null;
+
+      this.grid.forEach(row => {
+        row.forEach(cell => {
+          cell.objects.forEach(obj => {
+            if (obj.type === type && foundCell === null) {
+              foundCell = cell;
+            }
+          });
+        });
+      });
+
+      return foundCell;
+    },
+
+    /**
+     * Телепорт на объект. Для админов.
+     * @return {Promise<void>}
+     */
+    async adminTeleportToExit(objectType) {
+      const cell = this.findCellByObject(objectType);
+      if (!cell) {
+        return;
+      }
+
+      const response = await User.teleportAdmin(cell.coords.x, cell.coords.y);
+
+      this.currentPosition = {
+        x: response.data.x,
+        y: response.data.y,
+      };
     },
   },
 };
