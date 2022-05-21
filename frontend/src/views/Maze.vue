@@ -137,10 +137,7 @@ export default {
 
   methods: {
     async loadMaze(id) {
-      const response = await User.getMaze(
-        localStorage.getItem('accessToken'),
-        id,
-      );
+      const response = await User.getMaze(id);
 
       const grid = [];
       const objects = this.prepareObjects(response.data.maze.objects);
@@ -268,10 +265,7 @@ export default {
         return false;
       }
 
-      const response = await User.moveInMaze(
-        localStorage.getItem('accessToken'),
-        direction,
-      );
+      const response = await User.moveInMaze(direction);
 
       console.log(response.data);
 
@@ -299,7 +293,7 @@ export default {
      * @return {Promise<void>}
      */
     async exit() {
-      const response = await User.exit(localStorage.getItem('accessToken'));
+      const response = await User.exit();
 
       if (response.data.result === 'success') {
         await this.$router.push({name: 'MazeIntro'});
