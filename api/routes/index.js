@@ -8,5 +8,6 @@ api.use(require('./inventory-router'));
 api.use(require('./notifications-router'));
 api.use(require('./work-router'));
 api.use(require('./maze-router'));
+api.use(require('./temp-router'));
 
 module.exports = api;
