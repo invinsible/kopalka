@@ -25,7 +25,7 @@ const routes = [
     name: 'Login',
     component: () => import('../views/Login.vue'),
     beforeEnter: (to, from, next) => {
-      if (!store.getters.isRefreshToken) {
+      if (!store.getters['auth/isRefreshToken']) {
         next();
       } else {
         next('/');
@@ -44,8 +44,8 @@ const router = new VueRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
-  if (to.path !== '/login' && !store.getters.isRefreshToken) {
+router.beforeEach((to, from, next) => { 
+  if (to.path !== '/login' && !store.getters['auth/isRefreshToken']) {
     next('login');
   } else {
     next();

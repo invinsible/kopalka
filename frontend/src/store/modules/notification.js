@@ -33,6 +33,9 @@ const actions = {
       });
     }
   },
+  async closeNotification({commit}, id) {
+    commit('removeNotification', id);
+  },
 };
 
 const getters = {

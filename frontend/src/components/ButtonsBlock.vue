@@ -20,7 +20,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['workStatus', 'workResult']),
+    ...mapGetters('minerals', ['workStatus', 'workResult']),
     timerText() {      
       const min = Math.floor((this.timeDiffernce / 1000 / 60) << 0);
       const sec = Math.floor((this.timeDiffernce / 1000) % 60); 
@@ -49,14 +49,14 @@ export default {
       }, 1000);
     },
     async getStatus() {
-      const respone = await this.$store.dispatch('getStatus');
+      const respone = await this.$store.dispatch('minerals/getStatus');
       this.isLoad = false;
       return respone.data;
     },
 
     async startWork() {     
-      const response = await User.startWork();      
-      this.$store.commit('setStatus', response.data.cycle);
+      const response = await User.startWork();
+      this.$store.commit('minerals/setStatus', response.data.cycle);
       this.stopWork();
     },
 
@@ -65,8 +65,8 @@ export default {
         this.isLoad = true;
         clearInterval(this.interval);
         this.getStatus().then(resp => {
-          this.$store.commit('setWorkResult', resp.previous);
-          this.$store.dispatch('getTable');          
+          this.$store.commit('minerals/setWorkResult', resp.previous);
+          this.$store.dispatch('minerals/getTable');          
         });
       }, this.timeDiffernce);
     },

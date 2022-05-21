@@ -103,7 +103,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['isUserAdmin']),
+    ...mapGetters('user', ['isUserAdmin']),
     currentCell() {
       if (
         !this.grid[this.currentPosition.y] ||

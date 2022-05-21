@@ -66,9 +66,7 @@ export default {
       this.isLoading = true;
 
       try {
-        const response = await User.startMaze(
-            localStorage.getItem('accessToken'),
-        );
+        const response = await User.startMaze();
 
         if (response && response.data.id) {
           await this.$router.push({name: 'Maze', params: {id: response.data.id}});

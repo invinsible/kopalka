@@ -11,7 +11,7 @@
       </b-col> 
     </b-row>       
     <p v-else>Идёт загрузка</p>
-    <notifications />
+    <!-- <Notifications /> -->
   </b-container>
 </template>
 
@@ -19,14 +19,14 @@
 import {mapActions, mapGetters} from 'vuex';
 import MineralTable from '@/components/MineralTable.vue';
 import ButtonsBlock from '@/components/ButtonsBlock.vue';
-import Notifications from '@/components/Notifications.vue';
+// import Notifications from '@/components/Notifications.vue';
 
 export default {
   name: 'Home',
   components: {
     MineralTable,
     ButtonsBlock,
-    Notifications,
+    // Notifications,
   },
   data() {
     return {
@@ -34,15 +34,16 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['table']),
+    ...mapGetters('minerals', ['table']),
   },
   async created() {
     await this.getTable();
     this.isLoad = false;
-    this.getNotifications();
+    // this.getNotifications();
   },
   methods: {
-    ...mapActions(['getNotifications', 'getTable']),
+    // ...mapActions(['getNotifications', 'getTable']),
+    ...mapActions('minerals', ['getTable']),
   },
 };
 </script>

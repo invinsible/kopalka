@@ -19,8 +19,8 @@ const startApp = () => {
   }).$mount('#app');
 };
 
-if (localStorage.getItem('accessToken')) {
-  store.dispatch('checkToken', localStorage.getItem('accessToken'))
+if (localStorage.getItem('accessToken')) {  
+  store.dispatch('user/checkToken', localStorage.getItem('accessToken'))
       .then(() => {
         startApp();
       });
