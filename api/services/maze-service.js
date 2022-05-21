@@ -136,6 +136,7 @@ class MazeService {
 
     buildNewObject(coords, type) {
         return {
+            id: v4(),
             coords,
             type
         };

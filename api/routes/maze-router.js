@@ -105,7 +105,7 @@ router.post('/admin/tp', require("../middleware/admin-only"), async function (ct
     const {body} = ctx.request;
 
     console.log(body.x, body.y)
-    if (!body || !body.x || !body.y) {
+    if (!body || body.x === undefined || body.y === undefined) {
         ctx.throw(400, 'Coords are needed');
     }
 

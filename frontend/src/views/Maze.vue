@@ -40,6 +40,43 @@
       </b-col>
 
       <b-col>
+        <div class="mazeContainer">
+          <div class="mazeRow" v-for="(row, y) in visibleGrid" :key="'row' + y">
+            <div
+                class="mazeCell"
+                v-for="(cell, x) in row"
+                :key="'cell' + x"
+                :class="cellClass(cell)"
+            >
+              <div v-if="!cell.fog">
+                <span
+                    class="cellIcon"
+                    v-if="cellHasObject(cell, 'entry')">
+                  <b-icon-house-door></b-icon-house-door>
+                </span>
+                <span
+                    class="cellIcon"
+                    v-if="cellHasObject(cell, 'stairs-down')">
+                  <b-icon-box-arrow-in-down></b-icon-box-arrow-in-down>
+                </span>
+                <span
+                    class="cellIcon"
+                    v-if="cellHasObject(cell, 'chest')">
+                  <b-icon-box></b-icon-box>
+                </span>
+              </div>
+
+              <!--              <span class="cellIcon cellIcon__player" v-if="cellHasPlayer(cell)">-->
+              <!--                <b-icon-person-circle></b-icon-person-circle>-->
+              <!--              </span>-->
+              <!--                              {{ cell.coords.x }}x{{ cell.coords.y }}<br />-->
+              <!--                {{ cell.walls | asBitmap }}-->
+            </div>
+          </div>
+        </div>
+      </b-col>
+
+      <b-col>
         <b-row class="mb-5">
           <b-col>
             <h5>Действия</h5>
@@ -88,6 +125,7 @@
 <script>
 import User from '@/api/user';
 import {mapGetters} from 'vuex';
+import _inRange from 'lodash/inRange';
 
 const DIRECTIONS = {N: 1, S: 2, E: 4, W: 8};
 // const DX = {N: 0, S: 0, E: 1, W: -1};
@@ -127,11 +165,33 @@ export default {
         return false;
       }
 
-      return (
-        this.currentCell.objects.filter(item => {
-          return item.type === 'entry';
-        }).length === 1
-      );
+      return this.cellHasObject(this.currentCell, 'entry');
+    },
+
+    // Клетки, которые отображаются в центрированном виде
+    visibleGrid() {
+      if (this.grid.length === 0) {
+        return [];
+      }
+
+      const viewingDistance = 2;
+      const curX = this.currentPosition.x;
+      const curY = this.currentPosition.y;
+      const maxX = this.grid[0].length;
+      const maxY = this.grid.length;
+
+      const visibleGrid = {};
+      for (let y = curY - viewingDistance; y <= curY + viewingDistance; y++) {
+        visibleGrid[y] = {};
+        for (let x = curX - viewingDistance; x <= curX + viewingDistance; x++) {
+          if (_inRange(x, 0, maxX) && _inRange(y, 0, maxY)) {
+            visibleGrid[y][x] = this.grid[y][x];
+          }
+        }
+      }
+      console.trace(visibleGrid);
+
+      return visibleGrid;
     },
   },
 
@@ -382,6 +442,7 @@ export default {
 
 .mazeCell.e {
   border-right-style: solid;
+  box-shadow: -6px 0 5px -5px inset rgb(120 120 120)
 }
 
 .mazeCell.w {

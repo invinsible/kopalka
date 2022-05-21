@@ -26,7 +26,7 @@
         <b-card title="Обычный" class="mb-2">
           <b-card-text>
             <ul>
-              <li>Размер: 30x20</li>
+              <li>Размер: 20x20</li>
               <li>1 вход</li>
             </ul>
           </b-card-text>
