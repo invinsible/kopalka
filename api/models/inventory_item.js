@@ -6,8 +6,9 @@ module.exports = function (sequelize, DataTypes) {
         },
         item_id: {
             type: DataTypes.UUID,
-            primaryKey: true
+            primaryKey: true,
         },
+        type: DataTypes.INTEGER.UNSIGNED,
         quantity: {
             type: DataTypes.INTEGER.UNSIGNED
         },
