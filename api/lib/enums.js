@@ -17,5 +17,11 @@ module.exports = {
         types: {
             RESOURCE: 1
         }
+    },
+    inventory: {
+        types: {
+            MAIN: 1,
+            MAZE: 2
+        }
     }
 };

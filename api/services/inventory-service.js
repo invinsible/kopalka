@@ -1,4 +1,5 @@
 const {models} = require("../models");
+const enums = require('../lib/enums')
 
 class InventoryService {
     /**
@@ -33,6 +34,12 @@ class InventoryService {
 
         await models.InventoryItem.update({quantity: currentQty}, {where: rowIdentifier});
         return true;
+    }
+
+    async getItems(userId, type) {
+        type = type ?? enums.inventory.types.MAIN
+
+        return await models.InventoryItem.findAll({where: {user_id: userId, type: type}, include: models.Item})
     }
 }
 
